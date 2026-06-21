@@ -77,6 +77,18 @@ const Header = () => {
           >
             Lịch sử
           </NavLink>
+          <NavLink 
+            to="/quan-ly" 
+            className={({ isActive }) => 
+              `font-label-md text-label-md transition-all duration-300 h-full flex items-center border-b-2 ${
+                isActive 
+                  ? 'text-primary font-bold border-secondary' 
+                  : 'text-on-surface-variant hover:text-primary border-transparent'
+              }`
+            }
+          >
+            Quản lý
+          </NavLink>
         </nav>
 
         {/* User Account / Login Info */}
