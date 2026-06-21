@@ -2,6 +2,7 @@ package com.luxestay.homestay.controller;
 
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
+import com.luxestay.homestay.dto.response.ApiResponse;
 import com.luxestay.homestay.entity.User;
 import com.luxestay.homestay.service.UserService;
 import jakarta.validation.Valid;
@@ -17,8 +18,11 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreationRequest request){
-        return userService.createUser(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.createUser(request));
+        return apiResponse;
     }
 
     @GetMapping
