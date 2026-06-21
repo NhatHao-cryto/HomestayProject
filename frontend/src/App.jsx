@@ -15,6 +15,7 @@ import ChiTietLS from './pages/ChiTietLS';
 import ThanhToan from './pages/ThanhToan';
 import XacNhanThanhToan from './pages/XacNhanThanhToan';
 import ThongTinCaNhan from './pages/ThongTinCaNhan';
+import QuanLy from './pages/QuanLy';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="thanh-toan" element={<ThanhToan />} />
           <Route path="xac-nhan-thanh-toan" element={<XacNhanThanhToan />} />
           <Route path="thong-tin-ca-nhan" element={<ThongTinCaNhan />} />
+          <Route path="quan-ly" element={<QuanLy />} />
         </Route>
       </Routes>
     </Router>
