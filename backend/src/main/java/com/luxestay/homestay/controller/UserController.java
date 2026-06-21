@@ -5,6 +5,7 @@ import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.ApiResponse;
 import com.luxestay.homestay.dto.response.UserResponse;
 import com.luxestay.homestay.entity.User;
+import com.luxestay.homestay.mapper.UserMapper;
 import com.luxestay.homestay.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -23,8 +24,8 @@ public class UserController {
      UserService userService;
 
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
-        ApiResponse<User> apiResponse = new ApiResponse<>();
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
 
         apiResponse.setResult(userService.createUser(request));
         return apiResponse;
@@ -36,13 +37,19 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    UserResponse getUser(@PathVariable("userId") String userId){
-        return userService.getUser(userId);
+    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.getUser(userId));
+        return apiResponse;
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request){
-        return userService.updateUser(userId, request);
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+
+        apiResponse.setResult(userService.updateUser(userId, request));
+        return apiResponse;
     }
 
     @DeleteMapping("/{userId}")
