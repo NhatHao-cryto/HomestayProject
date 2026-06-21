@@ -2,19 +2,14 @@ package com.luxestay.homestay.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
+public class AuthenticationRequest {
+    String username;
     String password;
-    int phone;
-    String email;
-    String fullName;
-    LocalDate dob;
-    String sex;
 }
