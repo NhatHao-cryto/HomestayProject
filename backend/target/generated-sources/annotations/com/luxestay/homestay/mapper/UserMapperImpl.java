@@ -4,12 +4,14 @@ import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.UserResponse;
 import com.luxestay.homestay.entity.User;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-06-26T17:08:53+0700",
+    date = "2026-06-27T14:38:50+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.11 (Oracle Corporation)"
 )
 @Component
@@ -21,17 +23,17 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        User user = new User();
+        User.UserBuilder user = User.builder();
 
-        user.setEmail( request.getEmail() );
-        user.setUsername( request.getUsername() );
-        user.setPassword( request.getPassword() );
-        user.setPhone( request.getPhone() );
-        user.setFullName( request.getFullName() );
-        user.setDob( request.getDob() );
-        user.setSex( request.getSex() );
+        user.username( request.getUsername() );
+        user.password( request.getPassword() );
+        user.phone( request.getPhone() );
+        user.email( request.getEmail() );
+        user.fullName( request.getFullName() );
+        user.dob( request.getDob() );
+        user.sex( request.getSex() );
 
-        return user;
+        return user.build();
     }
 
     @Override
@@ -44,12 +46,15 @@ public class UserMapperImpl implements UserMapper {
 
         userResponse.id( user.getId() );
         userResponse.username( user.getUsername() );
-        userResponse.password( user.getPassword() );
         userResponse.phone( user.getPhone() );
         userResponse.email( user.getEmail() );
         userResponse.fullName( user.getFullName() );
         userResponse.dob( user.getDob() );
         userResponse.sex( user.getSex() );
+        Set<String> set = user.getRoles();
+        if ( set != null ) {
+            userResponse.roles( new LinkedHashSet<String>( set ) );
+        }
 
         return userResponse.build();
     }
@@ -60,9 +65,9 @@ public class UserMapperImpl implements UserMapper {
             return;
         }
 
-        user.setEmail( request.getEmail() );
         user.setPassword( request.getPassword() );
         user.setPhone( request.getPhone() );
+        user.setEmail( request.getEmail() );
         user.setFullName( request.getFullName() );
         user.setDob( request.getDob() );
         user.setSex( request.getSex() );
