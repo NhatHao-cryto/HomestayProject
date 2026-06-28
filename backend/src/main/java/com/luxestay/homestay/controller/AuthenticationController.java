@@ -2,6 +2,8 @@ package com.luxestay.homestay.controller;
 
 import com.luxestay.homestay.dto.request.AuthenticationRequest;
 import com.luxestay.homestay.dto.request.IntrospectRequest;
+import com.luxestay.homestay.dto.request.LogoutRequest;
+import com.luxestay.homestay.dto.request.RefershRequest;
 import com.luxestay.homestay.dto.response.ApiResponse;
 import com.luxestay.homestay.dto.response.AuthenticationResponse;
 import com.luxestay.homestay.dto.response.IntrospectResponse;
@@ -32,12 +34,28 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefershRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }
