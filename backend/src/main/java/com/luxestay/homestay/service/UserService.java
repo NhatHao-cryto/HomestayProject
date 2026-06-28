@@ -8,6 +8,7 @@ import com.luxestay.homestay.enums.Role;
 import com.luxestay.homestay.exception.AppException;
 import com.luxestay.homestay.exception.ErrorCode;
 import com.luxestay.homestay.mapper.UserMapper;
+import com.luxestay.homestay.repository.RoleRepository;
 import com.luxestay.homestay.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class UserService {
    UserRepository userRepository;
    UserMapper userMapper;
    PasswordEncoder passwordEncoder;
+   RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest request){
 
@@ -42,7 +44,7 @@ public class UserService {
 
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
-        user.setRoles(roles);
+        //user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -71,6 +73,10 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
