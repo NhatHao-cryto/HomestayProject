@@ -3,6 +3,7 @@ package com.luxestay.homestay.controller;
 import com.luxestay.homestay.dto.request.AuthenticationRequest;
 import com.luxestay.homestay.dto.request.IntrospectRequest;
 import com.luxestay.homestay.dto.request.LogoutRequest;
+import com.luxestay.homestay.dto.request.RefershRequest;
 import com.luxestay.homestay.dto.response.ApiResponse;
 import com.luxestay.homestay.dto.response.AuthenticationResponse;
 import com.luxestay.homestay.dto.response.IntrospectResponse;
@@ -28,6 +29,14 @@ public class AuthenticationController {
     @PostMapping("/token")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         var result = authenticationService.authenticate(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefershRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
