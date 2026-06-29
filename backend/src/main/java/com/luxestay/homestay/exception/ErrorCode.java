@@ -16,6 +16,11 @@ public enum ErrorCode {
     PASSWORD_INVALID(1004, "Password must be at least 8 characters.", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1006, "Unauthenticated.", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission.", HttpStatus.FORBIDDEN),
+    ROLE_NOT_EXISTED(1008, "Role not existed.", HttpStatus.NOT_FOUND),
+    EMAIL_NOT_FOUND(1009, "Email not found.", HttpStatus.NOT_FOUND),
+    OTP_EXPIRED(1010, "Otp already expired.", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1011, "Otp invalid.", HttpStatus.BAD_REQUEST),
+    VERIFICATION_NOT_FOUND(1012, "Verification not found.", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
