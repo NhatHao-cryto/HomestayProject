@@ -86,4 +86,27 @@ public class AuthenticationController {
                 .result("Đã gửi lại mã OTP")
                 .build();
     }
+    @PostMapping("/forgot-password")
+    public ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request){
+        otpService.forgotPassword(request.getEmail());
+        return ApiResponse.<String>builder()
+                .result("Đã gửi OTP")
+                .build();
+    }
+
+    @PostMapping("/verify-forgot-password")
+    public ApiResponse<String> verifyForgotPassword(@RequestBody VerifyForgotPasswordRequest request){
+        otpService.verifyForgotPassword(request);
+        return ApiResponse.<String>builder()
+                .result("Xác thực thành công")
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<String> resetPassword(@RequestBody ResetPasswordRequest request){
+        userService.resetPassword(request);
+        return ApiResponse.<String>builder()
+                .result("Đổi mật khẩu thành công")
+                .build();
+    }
 }

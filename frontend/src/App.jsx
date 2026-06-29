@@ -17,6 +17,9 @@ import XacNhanThanhToan from './pages/XacNhanThanhToan';
 import ThongTinCaNhan from './pages/ThongTinCaNhan';
 import QuanLy from './pages/QuanLy';
 import NhapMaPin from "./pages/NhapMaPin.jsx";
+import DatLaiMatKhau from "./pages/DatLaiMatKhau";
+import NhapOtpQuenMatKhau from "./pages/NhapOtpQuenMatKhau";
+import QuenMatKhau from "./pages/QuenMatKhau";
 
 function App() {
   return (
@@ -39,8 +42,10 @@ function App() {
           <Route path="xac-nhan-thanh-toan" element={<XacNhanThanhToan />} />
           <Route path="thong-tin-ca-nhan" element={<ThongTinCaNhan />} />
           <Route path="quan-ly" element={<QuanLy />} />
-          <Route path="/xac-thuc-pin" element={<NhapMaPin />}
-          />
+          <Route path="/xac-thuc-pin" element={<NhapMaPin />}/>
+          <Route path="/quen-mat-khau" element={<QuenMatKhau />}/>
+          <Route path="/xac-thuc-otp" element={<NhapOtpQuenMatKhau />}/>
+          <Route path="/dat-lai-mat-khau" element={<DatLaiMatKhau />}/>
         </Route>
       </Routes>
     </Router>

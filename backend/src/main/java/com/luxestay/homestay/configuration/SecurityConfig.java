@@ -34,7 +34,7 @@ public class SecurityConfig {
 
     private final String[] public_endpoints = {"/users", "/auth/token",
             "/auth/introspect", "/auth/logout", "/auth/refresh", "/auth/register", "/auth/verify-pin"
-            , "/auth/resend-pin"};
+            , "/auth/resend-pin", "/auth/forgot-password", "/auth/verify-forgot-password", "/auth/reset-password"};
 
     @Autowired
     CustomJwtDecoder customJwtDecoder;
