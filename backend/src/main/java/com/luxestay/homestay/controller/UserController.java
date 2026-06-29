@@ -1,5 +1,6 @@
 package com.luxestay.homestay.controller;
 
+import com.luxestay.homestay.dto.request.ChangePasswordRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.ApiResponse;
@@ -72,5 +73,13 @@ public class UserController {
     String deleteUser(@PathVariable String userId){
         userService.deleteUser(userId);
         return "User has been deleted.";
+    }
+
+    @PutMapping("/change-password")
+    ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request){
+        userService.changePassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Password changes success.")
+                .build();
     }
 }

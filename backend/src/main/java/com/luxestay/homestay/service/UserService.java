@@ -1,5 +1,6 @@
 package com.luxestay.homestay.service;
 
+import com.luxestay.homestay.dto.request.ChangePasswordRequest;
 import com.luxestay.homestay.dto.request.ResetPasswordRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
@@ -108,5 +109,18 @@ public class UserService {
         userRepository.save(user);
         emailVerificationRepositoryrepository.delete(verification);
 
+    }
+
+    public void changePassword(ChangePasswordRequest request){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.WRONG_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_OTP(1011, "Otp invalid.", HttpStatus.BAD_REQUEST),
     VERIFICATION_NOT_FOUND(1012, "Verification not found.", HttpStatus.NOT_FOUND),
     OTP_NOT_VERIFIED(1013, "Otp not verified.", HttpStatus.NOT_FOUND),
+    WRONG_PASSWORD(1014, "Your old password is wrong.", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
