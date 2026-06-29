@@ -98,9 +98,9 @@ const DangNhap = () => {
                   <label className="block font-label-md text-label-md text-on-surface-variant transition-colors group-focus-within:text-secondary" htmlFor="password">
                     Mật khẩu
                   </label>
-                  <a className="font-label-md text-label-md text-secondary hover:text-secondary-fixed-dim transition-colors underline-offset-4 hover:underline" href="#">
+                  <Link className="font-label-md text-label-md text-secondary hover:text-secondary-fixed-dim transition-colors underline-offset-4 hover:underline" to="/quen-mat-khau">
                     Quên mật khẩu?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <input 

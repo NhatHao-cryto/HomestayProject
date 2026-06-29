@@ -1,13 +1,16 @@
 package com.luxestay.homestay.service;
 
+import com.luxestay.homestay.dto.request.ResetPasswordRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.UserResponse;
+import com.luxestay.homestay.entity.EmailVerification;
 import com.luxestay.homestay.entity.User;
 import com.luxestay.homestay.enums.Role;
 import com.luxestay.homestay.exception.AppException;
 import com.luxestay.homestay.exception.ErrorCode;
 import com.luxestay.homestay.mapper.UserMapper;
+import com.luxestay.homestay.repository.EmailVerificationRepository;
 import com.luxestay.homestay.repository.RoleRepository;
 import com.luxestay.homestay.repository.UserRepository;
 import lombok.AccessLevel;
@@ -33,6 +36,7 @@ public class UserService {
    UserMapper userMapper;
    PasswordEncoder passwordEncoder;
    RoleRepository roleRepository;
+   EmailVerificationRepository emailVerificationRepositoryrepository;
 
     public UserResponse createUser(UserCreationRequest request){
 
@@ -85,5 +89,24 @@ public class UserService {
 
     public void deleteUser(String userId){
         userRepository.deleteById(userId);
+    }
+
+    public void resetPassword(ResetPasswordRequest request){
+
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
+                ()-> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
+
+        if(!verification.isVerified()){
+            throw new AppException(ErrorCode.OTP_NOT_VERIFIED);
+        }
+
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                ()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+        emailVerificationRepositoryrepository.delete(verification);
+
     }
 }

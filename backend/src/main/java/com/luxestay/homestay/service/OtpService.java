@@ -3,8 +3,10 @@ package com.luxestay.homestay.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
+import com.luxestay.homestay.dto.request.VerifyForgotPasswordRequest;
 import com.luxestay.homestay.dto.request.VerifyOtpRequest;
 import com.luxestay.homestay.entity.EmailVerification;
+import com.luxestay.homestay.entity.User;
 import com.luxestay.homestay.exception.AppException;
 import com.luxestay.homestay.exception.ErrorCode;
 import com.luxestay.homestay.repository.EmailVerificationRepository;
@@ -25,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OtpService {
 
     MailService mailService;
-    EmailVerificationRepository repository;
+    EmailVerificationRepository emailVerificationRepositoryrepository;
     ObjectMapper objectMapper;
     UserRepository userRepository;
 
@@ -37,20 +39,20 @@ public class OtpService {
 
         String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
 
-        EmailVerification verification = repository.findByEmail(request.getEmail()).orElse(new EmailVerification());
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElse(new EmailVerification());
 
         verification.setEmail(request.getEmail());
         verification.setOtp(otp);
         verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         verification.setRequestJson(objectMapper.writeValueAsString(request));
 
-        repository.save(verification);
+        emailVerificationRepositoryrepository.save(verification);
 
         mailService.sendOtp(request.getEmail(), otp);
     }
 
     public UserCreationRequest verifyOtp(VerifyOtpRequest request) throws JsonProcessingException {
-        EmailVerification verification = repository.findByEmail(request.getEmail()).orElseThrow(
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         if(LocalDateTime.now().isAfter(verification.getExpiredAt())){
@@ -62,12 +64,12 @@ public class OtpService {
         }
 
         UserCreationRequest userRequest = objectMapper.readValue(verification.getRequestJson(), UserCreationRequest.class);
-        repository.delete(verification);
+        emailVerificationRepositoryrepository.delete(verification);
         return userRequest;
     }
 
     public void resendOtp(String email) {
-        EmailVerification verification = repository.findByEmail(email).orElseThrow(
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(email).orElseThrow(
                 () -> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
 
         String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
@@ -75,8 +77,43 @@ public class OtpService {
         verification.setOtp(otp);
         verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
 
-        repository.save(verification);
+        emailVerificationRepositoryrepository.save(verification);
 
         mailService.sendOtp(email, otp);
+    }
+
+    public void forgotPassword(String email){
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
+
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(email).orElse(new EmailVerification());
+        verification.setEmail(email);
+        verification.setOtp(otp);
+        verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
+        verification.setVerified(false);
+        verification.setType("FORGOT_PASSWORD");
+
+        emailVerificationRepositoryrepository.save(verification);
+        mailService.sendOtp(email, otp);
+
+    }
+
+    public void verifyForgotPassword(VerifyForgotPasswordRequest request){
+
+        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
+                ()-> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
+
+        if(LocalDateTime.now().isAfter(verification.getExpiredAt())){
+            throw new AppException(ErrorCode.OTP_EXPIRED);
+        }
+
+        if(!verification.getOtp().equals(request.getOtp())){
+            throw new AppException(ErrorCode.INVALID_OTP);
+        }
+        verification.setVerified(true);
+        emailVerificationRepositoryrepository.save(verification);
+
     }
 }

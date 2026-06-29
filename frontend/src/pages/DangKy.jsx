@@ -51,8 +51,8 @@ const DangKy = () => {
         <section className="relative hidden md:flex md:w-1/2 overflow-hidden bg-primary">
           <img 
             alt="Misty Sapa mountain landscape" 
-            className="absolute inset-0 w-full h-full object-cover" 
-            src="https://lh3.googleusercontent.com/aida/ADBb0ujY01G_CdHUxeONz3BdbMQoXe7oGbI60wy_rwP33fBsGszsNnJNeaXKApOXSBFHHNHVsIppKqxLGQAgRYDc4beOMasHFwdzWYH6LtkFEXcHRdMsQTZe1YR5fj0ywfEz8H-Jj6tWIBi1GBuziz6xdHVIopLJm949nFrxW0zvj2Z-SPQJrETd-yteN2Ont1QjcwvpV6Lez6cANSL-AyscqMKOytOKCbAeFwiGuQyeqfmypPikUfAkgvCNNA" 
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4dWn0kFFyiC5H5Qsk8mD_kyQH_YO9Yq4qNZutzbt6ogy9ZOGVUOieoKPvDNwzZ4KBsUO1dtfgOzvXNihXcck_S5_0iins_ryTufFHW5bzX7MWNRr8ubm0nKVbTKGH1gXmipZfWunGdSkIzQULycxjlI_TeBQdWOxG067JvCJhNRszTPCpTAwIrCxnAoPeTVRqT6jnPe9DKY0ZzH--9MBfTI1Rs76u1msN4E0EAxbrv96_n7-cEECHqzpmtNYR5EWIsrbJL7UnOwI"
           />
           {/* Gradient & Text Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent flex flex-col justify-end p-margin-desktop">

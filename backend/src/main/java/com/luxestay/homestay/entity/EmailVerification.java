@@ -23,4 +23,6 @@ public class EmailVerification {
 
     @Lob
     private String requestJson;
+    private boolean verified;
+    private String type;
 }

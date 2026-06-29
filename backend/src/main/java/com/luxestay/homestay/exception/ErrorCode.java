@@ -21,6 +21,7 @@ public enum ErrorCode {
     OTP_EXPIRED(1010, "Otp already expired.", HttpStatus.BAD_REQUEST),
     INVALID_OTP(1011, "Otp invalid.", HttpStatus.BAD_REQUEST),
     VERIFICATION_NOT_FOUND(1012, "Verification not found.", HttpStatus.NOT_FOUND),
+    OTP_NOT_VERIFIED(1013, "Otp not verified.", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
