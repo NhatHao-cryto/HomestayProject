@@ -1,7 +1,20 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import 'react';
+import {NavLink, Link, useNavigate} from 'react-router-dom';
 
-const Header = () => {
+
+function Header() {
+
+  const navigate = useNavigate();
+
+  const handleUserClick = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/thong-tin-ca-nhan");
+    } else {
+      navigate("/dang-nhap");
+    }
+  };
   return (
     <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm h-20">
       <div class="flex justify-between items-center h-full px-margin-desktop max-w-container-max mx-auto">
@@ -92,21 +105,30 @@ const Header = () => {
         </nav>
 
         {/* User Account / Login Info */}
-        <div class="flex items-center gap-4">
-          <Link 
-            to="/thong-tin-ca-nhan" 
-            class="w-10 h-10 bg-primary text-on-primary rounded-lg cursor-pointer active:scale-95 transition-all duration-300 flex items-center justify-center shadow-sm"
-            aria-label="Account"
+        <div className="flex items-center gap-4">
+          <button
+              onClick={handleUserClick}
+              className="w-10 h-10 bg-primary text-on-primary rounded-lg cursor-pointer active:scale-95 transition-all duration-300 flex items-center justify-center shadow-sm"
+              aria-label="Account"
           >
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+                className="w-6 h-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
-          </Link>
+          </button>
         </div>
       </div>
     </header>
   );
 };
+
 
 export default Header;
