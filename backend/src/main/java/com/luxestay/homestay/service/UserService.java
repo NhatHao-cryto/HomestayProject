@@ -37,7 +37,7 @@ public class UserService {
    UserMapper userMapper;
    PasswordEncoder passwordEncoder;
    RoleRepository roleRepository;
-   EmailVerificationRepository emailVerificationRepositoryrepository;
+   EmailVerificationRepository emailVerificationRepository;
 
     public UserResponse createUser(UserCreationRequest request){
 
@@ -94,7 +94,7 @@ public class UserService {
 
     public void resetPassword(ResetPasswordRequest request){
 
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
+        EmailVerification verification = emailVerificationRepository.findByEmail(request.getEmail()).orElseThrow(
                 ()-> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
 
         if(!verification.isVerified()){
@@ -107,7 +107,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
-        emailVerificationRepositoryrepository.delete(verification);
+        emailVerificationRepository.delete(verification);
 
     }
 
