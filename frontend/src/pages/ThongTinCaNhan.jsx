@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import api from "../js/api.js";
 import { useNavigate } from 'react-router-dom';
 
 const ThongTinCaNhan = () => {
@@ -6,12 +7,30 @@ const ThongTinCaNhan = () => {
 
   // Profile data states
   const [profile, setProfile] = useState({
-    name: "Nguyễn Hoàng",
-    email: "julian.alex@luxestay.luxury",
-    phone: "+1 (555) 012-3456",
-    birthday: "November 24, 1988",
-    gender: "Nam"
+    id: "",
+    username: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    sex: "",
+    roles: []
   });
+
+  useEffect(() => {
+    const fetchMyInfo = async () => {
+      try {
+        const response = await api.get("/homestay/users/myInfo");
+        setProfile(response.data.result);
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem("token");
+        navigate("/dang-nhap");
+      }
+    };
+
+    fetchMyInfo();
+  }, [navigate]);
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -19,7 +38,7 @@ const ThongTinCaNhan = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
     alert("Đã đăng xuất thành công!");
     navigate('/dang-nhap');
   };
@@ -67,7 +86,7 @@ const ThongTinCaNhan = () => {
               <input className="hidden" id="avatar-upload" type="file" />
             </div>
             <div>
-              <h3 className="font-headline-md text-[16px] text-primary">{profile.name}</h3>
+              <h3 className="font-headline-md text-[16px] text-primary"><h3>{profile.fullName}</h3></h3>
               <p className="text-on-surface-variant font-body-md text-[13px]">San Francisco, CA • Joined May 2023</p>
               <div className="mt-1 flex gap-3">
                 <button className="font-label-md text-label-md text-secondary hover:underline text-yellow-600">Thay đổi ảnh</button>
@@ -83,9 +102,14 @@ const ThongTinCaNhan = () => {
                 <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Họ và tên</label>
                 <input 
                   className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" 
-                  type="text" 
-                  value={profile.name} 
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  type="text"
+                  value={profile.fullName}
+                  onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        fullName: e.target.value
+                      })
+                  }
                 />
               </div>
               <div className="relative group border rounded-lg p-3 pt-1">
@@ -110,17 +134,27 @@ const ThongTinCaNhan = () => {
                 <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Ngày sinh</label>
                 <input 
                   className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" 
-                  type="text" 
-                  value={profile.birthday} 
-                  onChange={(e) => setProfile({ ...profile, birthday: e.target.value })}
+                  type="text"
+                  value={profile.dob}
+                  onChange={(e)=>
+                      setProfile({
+                        ...profile,
+                        dob:e.target.value
+                      })
+                  }
                 />
               </div>
               <div className="relative group border rounded-lg p-3 pt-1 flex flex-col md:col-span-1 justify-center">
                 <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500 mb-1">Giới tính</label>
                 <select 
                   className="w-full bg-transparent font-body-md text-body-md outline-none border-none p-0 focus:ring-0 appearance-none"
-                  value={profile.gender}
-                  onChange={(e) => setProfile({ ...profile, gender: e.target.value })}
+                  value={profile.sex}
+                  onChange={(e)=>
+                      setProfile({
+                        ...profile,
+                        sex:e.target.value
+                      })
+                  }
                 >
                   <option>Nam</option>
                   <option>Nữ</option>

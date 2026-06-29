@@ -1,17 +1,42 @@
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from "../js/api.js";
 
 const DangNhap = () => {
   const navigate = useNavigate();
-  const [identity, setIdentity] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate Login success
-    localStorage.setItem('user', JSON.stringify({ name: "Nguyễn Hoàng", email: "julian.alex@luxestay.luxury" }));
-    navigate('/');
-  };
+
+    try{
+
+      const response = await api.post("/homestay/auth/token",{
+        username,
+        password
+      });
+
+      const token = response.data.result.token;
+
+      localStorage.setItem("token",token);
+      alert("Đã đăng nhập thành công!");
+      navigate("/");
+
+      // eslint-disable-next-line no-unused-vars
+    }catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        console.log(error.response.status);
+        console.log(error.response.data);
+      }
+
+      alert("Đăng nhập thất bại");
+    }
+
+  }
 
   return (
     <div className="bg-surface-container-high font-body-md text-on-surface antialiased flex items-center justify-center min-h-screen">
@@ -49,7 +74,7 @@ const DangNhap = () => {
               <p className="font-body-md text-body-md text-on-surface-variant">Chào mừng bạn quay trở lại với những kỳ nghỉ tuyệt vời.</p>
             </div>
             {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-6">
               {/* Email/Phone Input */}
               <div className="group">
                 <label className="block font-label-md text-label-md text-on-surface-variant mb-2 transition-colors group-focus-within:text-secondary" htmlFor="identity">
@@ -62,8 +87,8 @@ const DangNhap = () => {
                     placeholder="example@email.com" 
                     type="text"
                     required
-                    value={identity}
-                    onChange={(e) => setIdentity(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
               </div>
@@ -110,11 +135,11 @@ const DangNhap = () => {
             
             {/* Social Login */}
             <div className="grid grid-cols-2 gap-4">
-              <button onClick={handleSubmit} className="flex items-center justify-center gap-3 px-4 py-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group">
+              <button onClick={handleLogin} className="flex items-center justify-center gap-3 px-4 py-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group">
                 <img alt="Google" className="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLzRO3WV85vpsV8IdivSj16VFkds1823rpX7QuI9vtHoE6G6ScSQjEJfmoESCqPuLoLVs5iMXeSMm-tNrddZufPzYfQwbwiNibSw56oUwOphP7CGXZ6djIttfRffcJC07TqE0B8e79WIydkhBh2dxHz69_3Yxr337u78PzZzIn8jByqxD_Agamas4faP5jzO_Wa5a80UggjkVgyDTPocql2e9bbgq_7L_oBmEGGAEKnptYgp5Ymp_3mCVjN_k7WsXASwM8lHq7EU8" />
                 <span className="font-label-md text-on-surface-variant group-hover:text-on-surface">Google</span>
               </button>
-              <button onClick={handleSubmit} className="flex items-center justify-center gap-3 px-4 py-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group">
+              <button onClick={handleLogin} className="flex items-center justify-center gap-3 px-4 py-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors group">
                 <svg className="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
                 </svg>
