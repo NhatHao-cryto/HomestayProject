@@ -8,9 +8,9 @@ const DangNhap = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate Login success
-    localStorage.setItem('user', JSON.stringify({ name: "Nguyễn Hoàng", email: "julian.alex@luxestay.luxury" }));
-    navigate('/');
+    const role = identity.includes('admin') ? 'SYSTEM_ADMIN' : 'HOST_ADMIN';
+    localStorage.setItem('user', JSON.stringify({ name: 'Nguyễn Hoàng', email: 'julian.alex@luxestay.luxury', role }));
+    navigate(role === 'SYSTEM_ADMIN' ? '/system-admin' : '/host-admin');
   };
 
   return (

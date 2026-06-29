@@ -16,6 +16,12 @@ import ThanhToan from './pages/ThanhToan';
 import XacNhanThanhToan from './pages/XacNhanThanhToan';
 import ThongTinCaNhan from './pages/ThongTinCaNhan';
 import QuanLy from './pages/QuanLy';
+import HostAdminDashboard from './pages/HostAdminDashboard';
+import SystemAdminDashboard from './pages/SystemAdminDashboard';
+import HostVerification from './pages/HostVerification';
+import SystemAdminUsers from './pages/SystemAdminUsers';
+import SystemAdminHosts from './pages/SystemAdminHosts';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -38,6 +44,11 @@ function App() {
           <Route path="xac-nhan-thanh-toan" element={<XacNhanThanhToan />} />
           <Route path="thong-tin-ca-nhan" element={<ThongTinCaNhan />} />
           <Route path="quan-ly" element={<QuanLy />} />
+          <Route path="host-admin" element={<ProtectedRoute allowedRoles={['HOST_ADMIN']}><HostAdminDashboard /></ProtectedRoute>} />
+          <Route path="host-admin/verification" element={<ProtectedRoute allowedRoles={['HOST_ADMIN']}><HostVerification /></ProtectedRoute>} />
+          <Route path="system-admin" element={<ProtectedRoute allowedRoles={['SYSTEM_ADMIN']}><SystemAdminDashboard /></ProtectedRoute>} />
+          <Route path="system-admin/users" element={<ProtectedRoute allowedRoles={['SYSTEM_ADMIN']}><SystemAdminUsers /></ProtectedRoute>} />
+          <Route path="system-admin/hosts" element={<ProtectedRoute allowedRoles={['SYSTEM_ADMIN']}><SystemAdminHosts /></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>
