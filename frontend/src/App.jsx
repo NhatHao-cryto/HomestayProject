@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Layout & pages
@@ -16,6 +16,7 @@ import ThanhToan from './pages/ThanhToan';
 import XacNhanThanhToan from './pages/XacNhanThanhToan';
 import ThongTinCaNhan from './pages/ThongTinCaNhan';
 import QuanLy from './pages/QuanLy';
+import NhapMaPin from "./pages/NhapMaPin.jsx";
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
           <Route path="xac-nhan-thanh-toan" element={<XacNhanThanhToan />} />
           <Route path="thong-tin-ca-nhan" element={<ThongTinCaNhan />} />
           <Route path="quan-ly" element={<QuanLy />} />
+          <Route path="/xac-thuc-pin" element={<NhapMaPin />}
+          />
         </Route>
       </Routes>
     </Router>

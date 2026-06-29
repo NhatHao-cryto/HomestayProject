@@ -1,23 +1,47 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from "../js/api";
 
 const DangKy = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [dob, setDob] = useState('');
+  const [sex, setSex] = useState('Nam');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert("Mật khẩu xác nhận không khớp!");
       return;
     }
-    // Simulate Signup success
-    alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
-    navigate('/dang-nhap');
+    try {
+      await api.post("/homestay/auth/register", {
+        username,
+        password,
+        fullName: name,
+        email,
+        phone: Number(phone),
+        dob,
+        sex
+      });
+      sessionStorage.setItem(
+          "verifyEmail",
+          email
+      );
+      alert("Mã OTP đã được gửi đến email.");
+      navigate("/xac-thuc-pin");
+    } catch (error) {
+      alert(
+          error.response?.data?.message
+          || "Đăng ký thất bại."
+      );
+    }
+
   };
 
   return (
@@ -62,6 +86,24 @@ const DangKy = () => {
             </div>
             {/* Registration Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-1.5">
+                <label
+                    className="block font-label-md text-label-md text-on-surface-variant"
+                    htmlFor="username"
+                >
+                  Tên đăng nhập
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Nhập tên đăng nhập"
+                    className="w-full px-4 py-3.5 rounded-lg border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
+                />
+              </div>
               {/* Full Name */}
               <div className="space-y-1.5">
                 <label className="block font-label-md text-label-md text-on-surface-variant" htmlFor="name">Họ và tên</label>
@@ -100,6 +142,37 @@ const DangKy = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label
+                      className="block font-label-md text-label-md text-on-surface-variant"
+                  >
+                    Ngày sinh
+                  </label>
+                  <input
+                      type="date"
+                      value={dob}
+                      onChange={(e)=>setDob(e.target.value)}
+                      className="w-full px-4 py-3.5 rounded-lg border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                      className="block font-label-md text-label-md text-on-surface-variant"
+                  >
+                    Giới tính
+                  </label>
+                  <select
+                      value={sex}
+                      onChange={(e)=>setSex(e.target.value)}
+                      className="w-full px-4 py-3.5 rounded-lg border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none"
+                  >
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                  </select>
                 </div>
               </div>
               {/* Password */}
