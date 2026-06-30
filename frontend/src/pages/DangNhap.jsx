@@ -7,43 +7,64 @@ const DangNhap = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
+  // Giải mã payload của JWT (không cần thêm thư viện jwt-decode)
+  const decodeJwtPayload = (token) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  };
 
-  const input = identity.trim().toLowerCase();
-
-  let role = 'CUSTOMER';
-
-  if (input.includes('admin')) {
-    role = 'SYSTEM_ADMIN';
-  } else if (input.includes('host')) {
-    role = 'HOST_ADMIN';
-  }
-
-  const fakeUser = {
-    name: role === 'SYSTEM_ADMIN' ? 'System Admin' : 'Host Admin',
-    email: input || (role === 'SYSTEM_ADMIN' ? 'admin@luxestay.vn' : 'host@luxestay.vn'),
-    role: role
+  // Lấy role ưu tiên cao nhất từ claim "scope" (vd: "ROLE_HOST_ADMIN ROLE_CUSTOMER ...")
+  const extractRole = (scope) => {
+    if (!scope) return 'CUSTOMER';
+    const roles = scope.split(' ').filter((s) => s.startsWith('ROLE_'));
+    const priority = ['ROLE_SYSTEM_ADMIN', 'ROLE_HOST_ADMIN', 'ROLE_CUSTOMER'];
+    const matched = priority.find((r) => roles.includes(r));
+    return (matched || roles[0] || 'ROLE_CUSTOMER').replace('ROLE_', '');
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try{
-
-      const response = await api.post("/homestay/auth/token",{
+    try {
+      const response = await api.post("/homestay/auth/token", {
         username,
         password
       });
 
       const token = response.data.result.token;
+      localStorage.setItem("token", token);
 
-      localStorage.setItem("token",token);
+      const payload = decodeJwtPayload(token);
+      const role = extractRole(payload.scope);
+
+      const user = {
+        username: payload.sub,
+        role: role
+      };
+
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('role', role);
+      localStorage.setItem('isAuthenticated', 'true');
+
       alert("Đã đăng nhập thành công!");
-      navigate("/");
+
+      if (role === 'SYSTEM_ADMIN') {
+        navigate('/system-admin');
+      } else if (role === 'HOST_ADMIN') {
+        navigate('/host-admin');
+      } else {
+        navigate('/');
+      }
 
       // eslint-disable-next-line no-unused-vars
-    }catch (error) {
+    } catch (error) {
       console.error(error);
 
       if (error.response) {
@@ -53,15 +74,7 @@ const DangNhap = () => {
 
       alert("Đăng nhập thất bại");
     }
-
-  }
-
-  localStorage.setItem('user', JSON.stringify(fakeUser));
-  localStorage.setItem('role', role);
-  localStorage.setItem('isAuthenticated', 'true');
-
-  navigate(role === 'SYSTEM_ADMIN' ? '/system-admin' : '/host-admin');
-};
+  };
 
   return (
     <div className="bg-surface-container-high font-body-md text-on-surface antialiased flex items-center justify-center min-h-screen">

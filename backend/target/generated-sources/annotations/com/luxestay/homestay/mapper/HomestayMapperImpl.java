@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-06-30T21:30:33+0700",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.11 (Oracle Corporation)"
+    date = "2026-06-30T22:12:30+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 25.0.3 (Oracle Corporation)"
 )
 @Component
 public class HomestayMapperImpl implements HomestayMapper {
@@ -27,6 +27,7 @@ public class HomestayMapperImpl implements HomestayMapper {
         homestay.name( request.getName() );
         homestay.address( request.getAddress() );
         homestay.description( request.getDescription() );
+        homestay.status( request.getStatus() );
 
         return homestay.build();
     }
@@ -64,5 +65,6 @@ public class HomestayMapperImpl implements HomestayMapper {
         homestay.setName( request.getName() );
         homestay.setAddress( request.getAddress() );
         homestay.setDescription( request.getDescription() );
+        homestay.setStatus( request.getStatus() );
     }
 }

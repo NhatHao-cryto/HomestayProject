@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.luxestay.homestay.HomestayApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.06 s -- in com.luxestay.homestay.HomestayApplicationTests
