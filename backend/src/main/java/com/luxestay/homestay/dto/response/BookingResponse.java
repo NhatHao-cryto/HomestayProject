@@ -3,6 +3,10 @@ package com.luxestay.homestay.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -10,17 +14,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingResponse {
     String id;
-    String bookingCode;
+    String customerName;
+    String customerEmail;
     String homestayName;
-    String homestayLocation;
-    String homestayImage;
-    Long homestayId;
-    Long totalAmount;
+    String roomName;
+    LocalDate checkInDate;
+    LocalDate checkOutDate;
+    BigDecimal totalPrice;
     String status;
-    String paymentStatus;
-    String checkIn;
-    String checkOut;
-    Integer nights;
-    String guests;
-    String cancelNote;
+    LocalDateTime createdAt;
 }

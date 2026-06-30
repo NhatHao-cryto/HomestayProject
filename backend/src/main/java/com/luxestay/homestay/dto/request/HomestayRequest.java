@@ -1,18 +1,16 @@
-package com.luxestay.homestay.dto.response;
+package com.luxestay.homestay.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HomestayResponse {
-    String id;
+public class HomestayRequest {
     String name;
     String address;
     String city;
@@ -21,6 +19,4 @@ public class HomestayResponse {
     String roomType;
     String status;
     String imageUrl;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
 }
