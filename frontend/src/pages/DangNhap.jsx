@@ -7,11 +7,30 @@ const DangNhap = () => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const role = identity.includes('admin') ? 'SYSTEM_ADMIN' : 'HOST_ADMIN';
-    localStorage.setItem('user', JSON.stringify({ name: 'Nguyễn Hoàng', email: 'julian.alex@luxestay.luxury', role }));
-    navigate(role === 'SYSTEM_ADMIN' ? '/system-admin' : '/host-admin');
+  e.preventDefault();
+
+  const input = identity.trim().toLowerCase();
+
+  let role = 'CUSTOMER';
+
+  if (input.includes('admin')) {
+    role = 'SYSTEM_ADMIN';
+  } else if (input.includes('host')) {
+    role = 'HOST_ADMIN';
+  }
+
+  const fakeUser = {
+    name: role === 'SYSTEM_ADMIN' ? 'System Admin' : 'Host Admin',
+    email: input || (role === 'SYSTEM_ADMIN' ? 'admin@luxestay.vn' : 'host@luxestay.vn'),
+    role: role
   };
+
+  localStorage.setItem('user', JSON.stringify(fakeUser));
+  localStorage.setItem('role', role);
+  localStorage.setItem('isAuthenticated', 'true');
+
+  navigate(role === 'SYSTEM_ADMIN' ? '/system-admin' : '/host-admin');
+};
 
   return (
     <div className="bg-surface-container-high font-body-md text-on-surface antialiased flex items-center justify-center min-h-screen">

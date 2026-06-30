@@ -38,23 +38,50 @@ public class SecurityConfig {
     @Autowired
     CustomJwtDecoder customJwtDecoder;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, public_endpoints).permitAll()
-                        .anyRequest().authenticated());
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity.authorizeHttpRequests(request ->
+        request
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-        httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(customJwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                );
+                .requestMatchers(HttpMethod.POST, public_endpoints).permitAll()
 
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+                // DEMO: Host Verification
+                .requestMatchers(HttpMethod.POST, "/admin/host-verification").permitAll()
+                .requestMatchers(HttpMethod.GET, "/admin/host-verifications").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/admin/host-verifications/**").permitAll()
 
-        return httpSecurity.build();
-    }
+                // DEMO: Host Homestay Management
+                .requestMatchers(HttpMethod.POST, "/host/homestays").permitAll()
+                .requestMatchers(HttpMethod.GET, "/host/homestays").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/host/homestays/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/host/homestays/**").permitAll()
+
+                // DEMO: Host Room Management
+                .requestMatchers(HttpMethod.POST, "/host/rooms").permitAll()
+                .requestMatchers(HttpMethod.GET, "/host/rooms").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/host/rooms/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/host/rooms/**").permitAll()
+
+                // DEMO: System Admin
+                .requestMatchers(HttpMethod.GET, "/system/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/system/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/system/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/system/**").permitAll()
+
+                .anyRequest().authenticated()
+);
+    httpSecurity.oauth2ResourceServer(oauth2 ->
+            oauth2.jwt(jwtConfigurer ->
+                            jwtConfigurer.decoder(customJwtDecoder)
+                                    .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+    );
+
+    httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
+    return httpSecurity.build();
+}
 
     @Bean
     public CorsFilter corsFilter(){
