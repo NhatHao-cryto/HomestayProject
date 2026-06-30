@@ -1,5 +1,7 @@
 package com.luxestay.homestay.service;
 
+import com.luxestay.homestay.dto.request.ChangePasswordRequest;
+import com.luxestay.homestay.dto.request.ResetPasswordRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.UserResponse;
@@ -23,6 +25,9 @@ import java.util.List;
 public class UserService {
    UserRepository userRepository;
    UserMapper userMapper;
+   PasswordEncoder passwordEncoder;
+   RoleRepository roleRepository;
+   EmailVerificationRepository emailVerificationRepository;
 
     public UserResponse createUser(UserCreationRequest request){
 
@@ -54,5 +59,37 @@ public class UserService {
 
     public void deleteUser(String userId){
         userRepository.deleteById(userId);
+    }
+
+    public void resetPassword(ResetPasswordRequest request){
+
+        EmailVerification verification = emailVerificationRepository.findByEmail(request.getEmail()).orElseThrow(
+                ()-> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
+
+        if(!verification.isVerified()){
+            throw new AppException(ErrorCode.OTP_NOT_VERIFIED);
+        }
+
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                ()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+        emailVerificationRepository.delete(verification);
+
+    }
+
+    public void changePassword(ChangePasswordRequest request){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.WRONG_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }
