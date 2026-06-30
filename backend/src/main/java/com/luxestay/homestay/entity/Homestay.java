@@ -12,6 +12,15 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,5 +1,6 @@
 package com.luxestay.homestay.mapper;
 
+import com.luxestay.homestay.dto.request.UpdateMyInfoRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.PermissionResponse;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-06-28T16:21:49+0700",
+    date = "2026-06-30T20:06:26+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.11 (Oracle Corporation)"
 )
 @Component
@@ -67,6 +68,19 @@ public class UserMapperImpl implements UserMapper {
         }
 
         user.setPassword( request.getPassword() );
+        user.setPhone( request.getPhone() );
+        user.setEmail( request.getEmail() );
+        user.setFullName( request.getFullName() );
+        user.setDob( request.getDob() );
+        user.setSex( request.getSex() );
+    }
+
+    @Override
+    public void updateMyInfo(User user, UpdateMyInfoRequest request) {
+        if ( request == null ) {
+            return;
+        }
+
         user.setPhone( request.getPhone() );
         user.setEmail( request.getEmail() );
         user.setFullName( request.getFullName() );

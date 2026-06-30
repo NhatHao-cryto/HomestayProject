@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Layout & pages
 import Layout from './components/Layout';
@@ -28,6 +30,11 @@ import SystemAdminBookings from './pages/SystemAdminBookings';
 import HostAdminLayout from './components/HostAdminLayout';
 import SystemAdminLayout from './components/SystemAdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import QuanLy from './pages/QuanLy';
+import NhapMaPin from "./pages/NhapMaPin.jsx";
+import DatLaiMatKhau from "./pages/DatLaiMatKhau";
+import NhapOtpQuenMatKhau from "./pages/NhapOtpQuenMatKhau";
+import QuenMatKhau from "./pages/QuenMatKhau";
 
 function App() {
   return (
@@ -82,6 +89,11 @@ function App() {
 
           {/* Route cũ, chuyển về thông tin cá nhân */}
           <Route path="quan-ly" element={<Navigate to="/thong-tin-ca-nhan" replace />} />
+          <Route path="quan-ly" element={<QuanLy />} />
+          <Route path="/xac-thuc-pin" element={<NhapMaPin />}/>
+          <Route path="/quen-mat-khau" element={<QuenMatKhau />}/>
+          <Route path="/xac-thuc-otp" element={<NhapOtpQuenMatKhau />}/>
+          <Route path="/dat-lai-mat-khau" element={<DatLaiMatKhau />}/>
         </Route>
       </Routes>
     </Router>

@@ -1,7 +1,20 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import 'react';
+import {NavLink, Link, useNavigate} from 'react-router-dom';
 
-const Header = () => {
+
+function Header() {
+
+  const navigate = useNavigate();
+
+  const handleUserClick = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/thong-tin-ca-nhan");
+    } else {
+      navigate("/dang-nhap");
+    }
+  };
   return (
     <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm h-20">
       <div className="flex justify-between items-center h-full px-margin-desktop max-w-container-max mx-auto">
@@ -104,7 +117,7 @@ const Header = () => {
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
-          </Link>
+          </button>
         </div>
       </div>
     </header>

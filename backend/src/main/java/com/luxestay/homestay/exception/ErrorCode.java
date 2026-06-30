@@ -16,6 +16,17 @@ public enum ErrorCode {
     PASSWORD_INVALID(1004, "Password must be at least 8 characters.", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1006, "Unauthenticated.", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission.", HttpStatus.FORBIDDEN),
+    ROLE_NOT_EXISTED(1008, "Role not existed.", HttpStatus.NOT_FOUND),
+    EMAIL_NOT_FOUND(1009, "Email not found.", HttpStatus.NOT_FOUND),
+    OTP_EXPIRED(1010, "Otp already expired.", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1011, "Otp invalid.", HttpStatus.BAD_REQUEST),
+    VERIFICATION_NOT_FOUND(1012, "Verification not found.", HttpStatus.NOT_FOUND),
+    OTP_NOT_VERIFIED(1013, "Otp not verified.", HttpStatus.NOT_FOUND),
+    WRONG_PASSWORD(1014, "Your old password is wrong.", HttpStatus.BAD_REQUEST),
+    HOMESTAY_NOT_FOUND(1015, "Homestay not found.", HttpStatus.NOT_FOUND),
+    INVALID_BOOKING_DATE(1016, "Invalid booking date.", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_FOUND(1017, "Booking not found.", HttpStatus.NOT_FOUND),
+    PAYMENT_ALREADY_COMPLETED(1018, "Payment already completed.", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
