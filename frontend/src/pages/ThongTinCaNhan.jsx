@@ -235,10 +235,18 @@ const ThongTinCaNhan = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    alert('Đã đăng xuất thành công!');
-    navigate('/dang-nhap');
+  const handleLogout = async () => {
+
+    try {
+      await api.post("/homestay/auth/logout");
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+      localStorage.removeItem("token");
+      navigate("/dang-nhap");
+    }
   };
 
   return (
