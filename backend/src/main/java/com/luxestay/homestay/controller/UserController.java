@@ -1,6 +1,7 @@
 package com.luxestay.homestay.controller;
 
 import com.luxestay.homestay.dto.request.ChangePasswordRequest;
+import com.luxestay.homestay.dto.request.UpdateMyInfoRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.ApiResponse;
@@ -80,6 +81,14 @@ public class UserController {
         userService.changePassword(request);
         return ApiResponse.<Void>builder()
                 .message("Password changes success.")
+                .build();
+    }
+
+    @PutMapping("/myInfo")
+    ApiResponse<UserResponse> updateMyInfo(
+            @RequestBody UpdateMyInfoRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateMyInfo(request))
                 .build();
     }
 }

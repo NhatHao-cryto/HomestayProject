@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OtpService {
 
     MailService mailService;
-    EmailVerificationRepository emailVerificationRepositoryrepository;
+    EmailVerificationRepository emailVerificationRepository;
     ObjectMapper objectMapper;
     UserRepository userRepository;
 
@@ -39,20 +39,20 @@ public class OtpService {
 
         String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
 
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElse(new EmailVerification());
+        EmailVerification verification = emailVerificationRepository.findByEmail(request.getEmail()).orElse(new EmailVerification());
 
         verification.setEmail(request.getEmail());
         verification.setOtp(otp);
         verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         verification.setRequestJson(objectMapper.writeValueAsString(request));
 
-        emailVerificationRepositoryrepository.save(verification);
+        emailVerificationRepository.save(verification);
 
         mailService.sendOtp(request.getEmail(), otp);
     }
 
     public UserCreationRequest verifyOtp(VerifyOtpRequest request) throws JsonProcessingException {
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
+        EmailVerification verification = emailVerificationRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         if(LocalDateTime.now().isAfter(verification.getExpiredAt())){
@@ -64,12 +64,12 @@ public class OtpService {
         }
 
         UserCreationRequest userRequest = objectMapper.readValue(verification.getRequestJson(), UserCreationRequest.class);
-        emailVerificationRepositoryrepository.delete(verification);
+        emailVerificationRepository.delete(verification);
         return userRequest;
     }
 
     public void resendOtp(String email) {
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(email).orElseThrow(
+        EmailVerification verification = emailVerificationRepository.findByEmail(email).orElseThrow(
                 () -> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
 
         String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
@@ -77,7 +77,7 @@ public class OtpService {
         verification.setOtp(otp);
         verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
 
-        emailVerificationRepositoryrepository.save(verification);
+        emailVerificationRepository.save(verification);
 
         mailService.sendOtp(email, otp);
     }
@@ -88,21 +88,21 @@ public class OtpService {
 
         String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1000000));
 
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(email).orElse(new EmailVerification());
+        EmailVerification verification = emailVerificationRepository.findByEmail(email).orElse(new EmailVerification());
         verification.setEmail(email);
         verification.setOtp(otp);
         verification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         verification.setVerified(false);
         verification.setType("FORGOT_PASSWORD");
 
-        emailVerificationRepositoryrepository.save(verification);
+        emailVerificationRepository.save(verification);
         mailService.sendOtp(email, otp);
 
     }
 
     public void verifyForgotPassword(VerifyForgotPasswordRequest request){
 
-        EmailVerification verification = emailVerificationRepositoryrepository.findByEmail(request.getEmail()).orElseThrow(
+        EmailVerification verification = emailVerificationRepository.findByEmail(request.getEmail()).orElseThrow(
                 ()-> new AppException(ErrorCode.VERIFICATION_NOT_FOUND));
 
         if(LocalDateTime.now().isAfter(verification.getExpiredAt())){
@@ -113,7 +113,7 @@ public class OtpService {
             throw new AppException(ErrorCode.INVALID_OTP);
         }
         verification.setVerified(true);
-        emailVerificationRepositoryrepository.save(verification);
+        emailVerificationRepository.save(verification);
 
     }
 }

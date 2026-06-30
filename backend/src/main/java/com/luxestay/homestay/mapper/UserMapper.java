@@ -1,9 +1,9 @@
 package com.luxestay.homestay.mapper;
 
+import com.luxestay.homestay.dto.request.UpdateMyInfoRequest;
 import com.luxestay.homestay.dto.request.UserCreationRequest;
 import com.luxestay.homestay.dto.request.UserUpdateRequest;
 import com.luxestay.homestay.dto.response.UserResponse;
-import com.luxestay.homestay.entity.Role;
 import com.luxestay.homestay.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,5 +16,7 @@ public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    void updateMyInfo(@MappingTarget User user, UpdateMyInfoRequest request);
 
 }
