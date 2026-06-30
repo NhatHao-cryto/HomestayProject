@@ -3,7 +3,6 @@ package com.luxestay.homestay.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,16 +10,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HomestayResponse {
+public class HostVerificationResponse {
     String id;
-    String name;
-    String address;
-    String city;
-    String description;
-    BigDecimal pricePerNight;
-    String roomType;
+    String userId;
+    String fullName;
+    String email;
+    String phone;
+    String documentUrl;
+    String businessProofUrl;
     String status;
-    String imageUrl;
+    String rejectionReason;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

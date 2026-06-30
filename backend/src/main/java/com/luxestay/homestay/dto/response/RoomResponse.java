@@ -11,16 +11,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HomestayResponse {
+public class RoomResponse {
     String id;
-    String name;
-    String address;
-    String city;
-    String description;
-    BigDecimal pricePerNight;
+    String homestayId;
+    String roomName;
     String roomType;
+    BigDecimal price;
+    Integer capacity;
     String status;
-    String imageUrl;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }
