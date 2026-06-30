@@ -23,6 +23,10 @@ public enum ErrorCode {
     VERIFICATION_NOT_FOUND(1012, "Verification not found.", HttpStatus.NOT_FOUND),
     OTP_NOT_VERIFIED(1013, "Otp not verified.", HttpStatus.NOT_FOUND),
     WRONG_PASSWORD(1014, "Your old password is wrong.", HttpStatus.BAD_REQUEST),
+    HOMESTAY_NOT_FOUND(1015, "Homestay not found.", HttpStatus.NOT_FOUND),
+    INVALID_BOOKING_DATE(1016, "Invalid booking date.", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_FOUND(1017, "Booking not found.", HttpStatus.NOT_FOUND),
+    PAYMENT_ALREADY_COMPLETED(1018, "Payment already completed.", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
