@@ -1,9 +1,6 @@
 package com.luxestay.homestay.service;
 
-import com.luxestay.homestay.dto.request.ChangePasswordRequest;
-import com.luxestay.homestay.dto.request.ResetPasswordRequest;
-import com.luxestay.homestay.dto.request.UserCreationRequest;
-import com.luxestay.homestay.dto.request.UserUpdateRequest;
+import com.luxestay.homestay.dto.request.*;
 import com.luxestay.homestay.dto.response.UserResponse;
 import com.luxestay.homestay.entity.EmailVerification;
 import com.luxestay.homestay.entity.User;
@@ -112,5 +109,16 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public UserResponse updateMyInfo(UpdateMyInfoRequest request){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        userMapper.updateMyInfo(user, request);
+        return userMapper.toUserResponse(userRepository.save(user)
+        );
     }
 }

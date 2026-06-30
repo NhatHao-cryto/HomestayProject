@@ -185,7 +185,7 @@ const ModalDoiMatKhau = ({ onClose }) => {
   );
 };
 
-// ─── Trang Thông Tin Cá Nhân ────────────────────────────────────────────────
+//  Trang Thông Tin Cá Nhân
 const ThongTinCaNhan = () => {
   const navigate = useNavigate();
   const [showModalDoiMatKhau, setShowModalDoiMatKhau] = useState(false);
@@ -209,9 +209,30 @@ const ThongTinCaNhan = () => {
     fetchMyInfo();
   }, [navigate]);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    alert('Cập nhật thông tin cá nhân thành công!');
+    try {
+      const response = await api.put(
+          "/homestay/users/myInfo",
+          {
+            fullName: profile.fullName,
+            email: profile.email,
+            phone: Number(profile.phone),
+            dob: profile.dob,
+            sex: profile.sex
+          }
+      );
+
+      setProfile(response.data.result);
+      alert("Cập nhật thành công!");
+
+    } catch (error) {
+      console.error(error);
+      alert(
+          error.response?.data?.message ??
+          "Không thể cập nhật thông tin."
+      );
+    }
   };
 
   const handleLogout = () => {
@@ -287,42 +308,98 @@ const ThongTinCaNhan = () => {
 
             <form onSubmit={handleSave} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                <div className="relative group border rounded-lg p-3 pt-1">
-                  <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Họ và tên</label>
-                  <input className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" type="text" value={profile.fullName} onChange={(e) => setProfile({ ...profile, fullName: e.target.value })} />
+                <div className="relative border rounded-lg p-3 pt-1">
+                  <label className="text-gray-500 text-[11px]">
+                    Họ và tên
+                  </label>
+                  <input
+                      type="text"
+                      className="w-full bg-transparent border-none outline-none p-0 focus:ring-0"
+                      value={profile.fullName || ""}
+                      onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            fullName: e.target.value,
+                          })
+                      }
+                      required
+                  />
                 </div>
-                <div className="relative group border rounded-lg p-3 pt-1">
-                  <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Địa chỉ Email</label>
-                  <input className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
+                <div className="relative border rounded-lg p-3 pt-1">
+                  <label className="text-gray-500 text-[11px]">
+                    Địa chỉ Email
+                  </label>
+                  <input
+                      type="email"
+                      className="w-full bg-transparent border-none outline-none p-0 focus:ring-0"
+                      value={profile.email || ""}
+                      onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            email: e.target.value,
+                          })
+                      }
+                      required
+                  />
                 </div>
-                <div className="relative group border rounded-lg p-3 pt-1">
-                  <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Số điện thoại</label>
-                  <input className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" type="tel" value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
+
+                <div className="relative border rounded-lg p-3 pt-1">
+                  <label className="text-gray-500 text-[11px]">
+                    Số điện thoại
+                  </label>
+                  <input
+                      type="tel"
+                      className="w-full bg-transparent border-none outline-none p-0 focus:ring-0"
+                      value={profile.phone || ""}
+                      onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            phone: e.target.value,
+                          })
+                      }
+                      required
+                  />
                 </div>
-                <div className="relative group border rounded-lg p-3 pt-1">
-                  <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500">Ngày sinh</label>
-                  <input className="w-full bg-transparent font-body-md text-body-md outline-none transition-all border-none p-0 focus:ring-0" type="text" value={profile.dob} onChange={(e) => setProfile({ ...profile, dob: e.target.value })} />
+                <div className="relative border rounded-lg p-3 pt-1">
+                  <label className="text-gray-500 text-[11px]">
+                    Ngày sinh
+                  </label>
+                  <input
+                      type="date"
+                      className="w-full bg-transparent border-none outline-none p-0 focus:ring-0"
+                      value={profile.dob || ""}
+                      onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            dob: e.target.value,
+                          })
+                      }
+                  />
                 </div>
-                <div className="relative group border rounded-lg p-3 pt-1 flex flex-col md:col-span-1 justify-center">
-                  <label className="text-on-surface-variant font-label-md text-[11px] text-gray-500 mb-1">Giới tính</label>
-                  <select className="w-full bg-transparent font-body-md text-body-md outline-none border-none p-0 focus:ring-0 appearance-none" value={profile.sex} onChange={(e) => setProfile({ ...profile, sex: e.target.value })}>
-                    <option>Nam</option>
-                    <option>Nữ</option>
-                    <option>Khác</option>
-                    <option>Không muốn trả lời</option>
+                <div className="relative border rounded-lg p-3 pt-1 md:col-span-2">
+                  <label className="text-gray-500 text-[11px]">
+                    Giới tính
+                  </label>
+
+                  <select
+                      className="w-full bg-transparent border-none outline-none p-0 focus:ring-0"
+                      value={profile.sex || ""}
+                      onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            sex: e.target.value,
+                          })
+                      }
+                  >
+                    <option value="">-- Chọn giới tính --</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
                   </select>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModalDoiMatKhau(true)}
-                  className="px-8 py-2.5 rounded-lg font-headline-md text-[16px] border-2 hover:bg-gray-50 transition-all"
-                  style={{ borderColor: 'rgb(0, 35, 73)', color: 'rgb(0, 35, 73)' }}
-                >
-                  Đổi mật khẩu
-                </button>
                 <button
                   type="submit"
                   className="text-white px-8 py-2.5 rounded-lg font-headline-md text-[16px] hover:shadow-md active:scale-[0.98] transition-all"
