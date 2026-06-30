@@ -1,17 +1,5 @@
 package com.luxestay.homestay.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-@Getter
-@Setter
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,20 +13,38 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
 public class Homestay {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     String name;
+    String location;
     String address;
-    String city;
+
+    Long price;
+    Double stars;
+    Integer reviewsCount;
+
+    @Column(columnDefinition = "TEXT")
     String description;
-    BigDecimal pricePerNight;
-    String roomType;
-    String status;
-    String imageUrl;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+
+    @Column(columnDefinition = "TEXT")
+    String descriptionExtended;
+
+    @Column(columnDefinition = "TEXT")
+    String image;
+    String badge;
+
+    @ElementCollection
+    @CollectionTable(name = "homestay_images", joinColumns = @JoinColumn(name = "homestay_id"))
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    @Builder.Default
+    List<String> images = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "homestay_amenities", joinColumns = @JoinColumn(name = "homestay_id"))
+    @Column(name = "amenity")
+    @Builder.Default
+    List<String> amenities = new ArrayList<>();
 }

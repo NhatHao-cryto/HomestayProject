@@ -1,18 +1,5 @@
 package com.luxestay.homestay.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-@Getter
-@Setter
 import com.luxestay.homestay.enums.BookingStatus;
 import com.luxestay.homestay.enums.PaymentMethod;
 import com.luxestay.homestay.enums.PaymentStatus;
@@ -35,13 +22,39 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    String customerName;
-    String customerEmail;
-    String homestayName;
-    String roomName;
-    LocalDate checkInDate;
-    LocalDate checkOutDate;
-    BigDecimal totalPrice;
-    String status;
+    @Column(unique = true)
+    String bookingCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "homestay_id")
+    Homestay homestay;
+
+    LocalDate checkIn;
+    LocalDate checkOut;
+    Integer nights;
+    String guestsDescription;
+    Integer adultCount;
+    Integer childCount;
+
+    Long roomPrice;
+    Long serviceFee;
+    Long totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    BookingStatus bookingStatus = BookingStatus.PENDING;
+
     LocalDateTime createdAt;
+    LocalDateTime paidAt;
 }
