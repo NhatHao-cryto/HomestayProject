@@ -1,89 +1,133 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import api from "../js/api";
 
 const CTHomestay = () => {
+
+  const fetchHomestay = async () => {
+
+    try {
+      setLoading(true);
+      const response = await api.get(`/homestay/homestays/${id}`);
+      setData(response.data.result);
+
+    } catch (error) {
+      console.error(error);
+      setError("Không thể tải thông tin homestay");
+
+    } finally {
+      setLoading(false);
+    }
+
+  };
+
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Selected date & guest states
-  const [dateRange, setDateRange] = useState('15/11/2023 - 17/11/2023');
-  const [guests, setGuests] = useState('2 Người lớn, 1 Trẻ em');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [adultCount, setAdultCount] = useState(2);
+  const [childCount, setChildCount] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Homestays data for detail display
-  const homestayDetails = {
-    "1": {
-      name: "Villa Hoàng Hôn",
-      location: "Bán đảo Sơn Trà, Đà Nẵng",
-      price: 1250000,
-      stars: 5.0,
-      reviewsCount: 120,
-      description: "Chào mừng bạn đến với Villa Hoàng Hôn, một kiệt tác kiến trúc tọa lạc tại vị trí đắc địa nhất của Bán đảo Sơn Trà. Nơi đây không chỉ là một chỗ nghỉ, mà là một trải nghiệm sống xa hoa, nơi biển trời hòa quyện trong từng khoảnh khắc.",
-      descriptionExtended: "Với hồ bơi vô cực riêng hướng thẳng ra vịnh Đà Nẵng, bạn có thể thưởng ngoạn những buổi hoàng hôn rực rỡ nhất trong không gian hoàn toàn riêng tư. Nội thất được thiết kế theo phong cách hiện đại tối giản với các vật liệu cao cấp, mang lại cảm giác tĩnh lặng và thượng lưu.",
-      images: [
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuATlA4S3qFef10VNDQGBMsXkBvvmKUpnlRue6j5GpksdPYQxtamnJgeHgmoZxNDPtl31sW8YzeXaNkGURaphfaEpF7W0foggPu7fmNLpHOKXFdw_LhWDr6eqBM4rU6fIb4QU_PM-_O0CWk7hztfTpvUoLTpXBStjmUyirvL1hQHca9T8lsK0zomOZU-mHrgMn60DQflV-iyESqSm4PUfDi8ING-zFhzNloa2c3ZH2fugJyDZb7khkZpea1cFKzRDayIFaXl9cJenDU",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuB9szZzqJVTqpjOxXwh02RYGjgmnhUjx8o8yS-cNdxhmWMO9j3GEoHXsG4DJaGGOqrSLZHfzTzB6MjZOu5JgX7MUvQ62K_3V5I5Ju1CKZkIVoVDSI9a6aj-OaInflPA_fDiuVjirOBr293p2WOZA3M-WYzpJkDuEdUO9hXanZzI4taALBWCmiDSokHTaAh5ir861Zz13k_OQuVnQ3UsEIqFv5WzInzI0T79j0NOsb7TCQL1E_E8wweDfWvdeH6w_hpxGpyTHU9TAuE",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuByVyxtCT7SYjTXNdxTD1dgc-K4Hv4zetxKhPwogn_Ho4rTTCy6VZ40x4wxPkN4-xlB0in1AlhIbVQYLI_Vv5DFjPcIf4Jkhg3dSiDP5VlcoTHRv3ZLGpx51mRiiSXUCN5N1nfcCV0b8aY4oj4jE2tWzUyWq4nkbDzysY5UqF-MTFX-CshskR1e2wMih6bfgeuPtIShqdaeTItumETWkmt0qgu2nWeg2HQYnKYqXmliTzAWtBiXX9S3CT-2YjgKMBEW7gSsVqqKH5o",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDtssApPoM-gbZJmyPAHLkM33_1bz2qYd8jVhwBxl9BinLtOMyIAv39cKA6J68u2JTL7YEOTtf_Bkn8bGC0PZs6nOyna5N2GMNLuymfnaC-OBWMbElu7OCPVTV-KVcWo6RYxACxthIanHX2Dc3KEMdKASRmHxRH6SzGuXeYTsiVSJTXlaWk2ywwozKgU9PHsUQuzwuw7qFLh-GOhMWjYm0R806hc7IROXn8RmKqEBIuZ9S9Il4RkNkre50woSFqUzK3OsGk8MA1F2o"
-      ],
-      amenities: ["WiFi tốc độ cao", "Hồ bơi vô cực", "Khu vực BBQ", "Bếp đầy đủ thiết bị", "Chỗ đậu xe miễn phí", "Điều hòa nhiệt độ"],
-      address: "Bán đảo Sơn Trà, Thọ Quang, Sơn Trà, Đà Nẵng. Cách trung tâm thành phố 15 phút lái xe.",
-      reviews: [
-        { name: "Nguyễn Hoàng", date: "Tháng 10, 2023", text: "Một trải nghiệm thực sự tuyệt vời. Tầm nhìn từ hồ bơi vô cực vào buổi chiều không thể diễn tả bằng lời. Dịch vụ của Luxestay vô cùng chuyên nghiệp." },
-        { name: "Minh Trang", date: "Tháng 09, 2023", text: "Biệt thự rất sạch sẽ, đầy đủ tiện nghi. Tôi và gia đình đã có một kỳ nghỉ cuối tuần trọn vẹn tại đây. Sẽ quay lại!" }
-      ]
-    },
-    "2": {
-      name: "An Villa Hội An Premium",
-      location: "Thôn Võng Nhi, Cẩm Thanh, Hội An",
-      price: 1250000,
-      stars: 4.8,
-      reviewsCount: 85,
-      description: "Tọa lạc tại vùng ngoại ô yên bình của Hội An, An Villa Hội An Premium là chốn dừng chân hoàn hảo để bạn rời xa xô bồ đô thị và cảm nhận hơi thở nhẹ nhàng của dòng sông Thu Bồn thơ mộng.",
-      descriptionExtended: "Nơi đây được bao quanh bởi vườn dừa nước xanh rì và lối kiến trúc truyền thống Đông Dương hòa quyện với những tiện nghi chuẩn resort 5 sao. Hồ bơi nước ngọt lớn ngoài trời, khu Spa riêng biệt sẽ giúp bạn tái tạo năng lượng hoàn toàn.",
-      images: [
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuAGluQsVC4x6cr_atrOltye4tuvogRhuudg-t2nzdE_epJfV-T2xz1zBWo8Yxzj7E1Ki4GvTEYnq1kypWmRbv-CB0Y5MAfj9PROCqqBbO7eYhUIYPxftVxiVjty0V7iOkJaFuRp0bx7dovM3C4d8aKfVf1wW8LdGS1DRYZq5I_9lWKfW46LAqlzEe6Eq7ThUNu13lhEu9QTpfJeNTxMHYRZWTvOMHGnttB2P5mvHKnI8SuPkvJYXyB8fHuZmySnYsSvZ5XGfJtJqkE",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuB9szZzqJVTqpjOxXwh02RYGjgmnhUjx8o8yS-cNdxhmWMO9j3GEoHXsG4DJaGGOqrSLZHfzTzB6MjZOu5JgX7MUvQ62K_3V5I5Ju1CKZkIVoVDSI9a6aj-OaInflPA_fDiuVjirOBr293p2WOZA3M-WYzpJkDuEdUO9hXanZzI4taALBWCmiDSokHTaAh5ir861Zz13k_OQuVnQ3UsEIqFv5WzInzI0T79j0NOsb7TCQL1E_E8wweDfWvdeH6w_hpxGpyTHU9TAuE",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuByVyxtCT7SYjTXNdxTD1dgc-K4Hv4zetxKhPwogn_Ho4rTTCy6VZ40x4wxPkN4-xlB0in1AlhIbVQYLI_Vv5DFjPcIf4Jkhg3dSiDP5VlcoTHRv3ZLGpx51mRiiSXUCN5N1nfcCV0b8aY4oj4jE2tWzUyWq4nkbDzysY5UqF-MTFX-CshskR1e2wMih6bfgeuPtIShqdaeTItumETWkmt0qgu2nWeg2HQYnKYqXmliTzAWtBiXX9S3CT-2YjgKMBEW7gSsVqqKH5o",
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDtssApPoM-gbZJmyPAHLkM33_1bz2qYd8jVhwBxl9BinLtOMyIAv39cKA6J68u2JTL7YEOTtf_Bkn8bGC0PZs6nOyna5N2GMNLuymfnaC-OBWMbElu7OCPVTV-KVcWo6RYxACxthIanHX2Dc3KEMdKASRmHxRH6SzGuXeYTsiVSJTXlaWk2ywwozKgU9PHsUQuzwuw7qFLh-GOhMWjYm0R806hc7IROXn8RmKqEBIuZ9S9Il4RkNkre50woSFqUzK3OsGk8MA1F2o"
-      ],
-      amenities: ["WiFi tốc độ cao", "Hồ bơi ngoài trời", "Khu vực BBQ", "Bếp đầy đủ thiết bị", "Spa chăm sóc sức khỏe", "Điều hòa nhiệt độ"],
-      address: "Thôn Võng Nhi, xã Cẩm Thanh, Thành phố Hội An, Quảng Nam. Cách Phố cổ 10 phút đi xe.",
-      reviews: [
-        { name: "Khánh Linh", date: "Tháng 11, 2023", text: "Địa điểm vô cùng yên bình, nhân viên phục vụ tận tình và chu đáo như người nhà. Bữa sáng đậm chất Hội An rất ngon." }
-      ]
-    }
-  };
+  useEffect(() => {
+    const today = new Date();
+    const inDate = new Date(today);
+    inDate.setDate(today.getDate() + 7);
+    const outDate = new Date(inDate);
+    outDate.setDate(inDate.getDate() + 2);
+    setCheckIn(inDate.toISOString().split('T')[0]);
+    setCheckOut(outDate.toISOString().split('T')[0]);
+  }, []);
 
-  // Get current active details or fallback to Villa Hoàng Hôn
-  const data = homestayDetails[id] || homestayDetails["1"];
+  useEffect(() => {
+    fetchHomestay();
+  }, [id]);
+  if (loading) {
+    return (
+      <main className="pt-32 pb-section-gap text-center">
+        <p className="text-on-surface-variant">Đang tải thông tin homestay...</p>
+      </main>
+    );
+  }
 
-  const nights = 2;
+  if (error || !data) {
+    return (
+      <main className="pt-32 pb-section-gap text-center">
+        <p className="text-red-600">{error || 'Không tìm thấy homestay'}</p>
+        <Link to="/homestays" className="text-primary underline mt-4 inline-block">Quay lại danh sách</Link>
+      </main>
+    );
+  }
+
+  const nights = checkIn && checkOut
+    ? Math.max(1, Math.round((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)))
+    : 2;
   const roomTotal = data.price * nights;
   const serviceFee = 0;
-  const vat = 0; // standard setup
   const totalAmount = roomTotal + serviceFee;
+  `${checkIn.split('-').reverse().join('/')} - ${checkOut.split('-').reverse().join('/')}`;
+  const images =
+      data?.images && data.images.length > 0
+          ? data.images
+          : data?.image
+              ? [data.image]
+              : [];
 
-  const handleBooking = () => {
-    // Navigate to payment page with details in state
-    navigate('/thanh-toan', {
-      state: {
-        homestayId: id || "1",
-        homestayName: data.name,
-        location: data.location,
-        price: data.price,
-        nights,
-        dateRange,
-        guests,
-        totalAmount
-      }
-    });
+  const handleBooking = async () => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Vui lòng đăng nhập.");
+      navigate("/dang-nhap");
+      return;
+
+    }
+    if (!checkIn || !checkOut) {
+      alert("Vui lòng chọn ngày.");
+      return;
+    }
+
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      alert("Ngày trả phòng phải sau ngày nhận.");
+      return;
+
+    }
+
+    try {
+      setSubmitting(true);
+      await api.post("/homestay/bookings", {
+        homestayId: data.id,
+        checkIn,
+        checkOut,
+        adultCount,
+        childCount
+      });
+      alert("Đặt phòng thành công!");
+
+      navigate("/lich-su-dat-phong");
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Đặt phòng thất bại.");
+
+    } finally {
+
+      setSubmitting(false);
+
+    }
+
   };
 
   return (
     <main className="pt-24 pb-section-gap">
       <div className="max-w-container-max mx-auto px-margin-desktop">
-        
-        {/* Navigation Breadcrumb */}
         <nav className="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant mb-6 pt-4">
           <Link to="/" className="hover:text-primary">Trang chủ</Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -92,38 +136,26 @@ const CTHomestay = () => {
           <span className="text-primary font-bold">{data.name}</span>
         </nav>
 
-        {/* Image Gallery Bento Grid */}
         <section className="grid grid-cols-4 grid-rows-2 gap-4 h-[600px] mb-12">
           <div className="col-span-2 row-span-2 relative overflow-hidden rounded-xl">
-            <img alt={data.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={data.images[0]} />
-            <div className="absolute bottom-6 left-6 glass-card px-4 py-2 rounded-lg">
-              <p className="font-label-md text-label-md text-primary">Toàn cảnh Villa</p>
+            <img alt={data.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={images[0]} />
+          </div>
+          {images.slice(1, 4).map((img, idx) => (
+            <div key={idx} className={`overflow-hidden rounded-xl ${idx === 2 ? 'col-span-2 relative' : 'col-span-1'}`}>
+              <img alt="Homestay" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={img} />
             </div>
-          </div>
-          <div className="col-span-1 overflow-hidden rounded-xl">
-            <img alt="Interior" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={data.images[1]} />
-          </div>
-          <div className="col-span-1 overflow-hidden rounded-xl">
-            <img alt="Bedroom" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={data.images[2]} />
-          </div>
-          <div className="col-span-2 overflow-hidden rounded-xl relative">
-            <img alt="Pool Side" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-pointer" src={data.images[3]} />
-            <button className="absolute bottom-6 right-6 bg-surface px-6 py-2.5 rounded-lg font-label-md text-label-md border border-outline-variant hover:bg-surface-container-high transition-colors">
-              Xem tất cả ảnh
-            </button>
-          </div>
+          ))}
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-          {/* Left Content */}
           <div className="lg:col-span-2">
             <div className="mb-10">
               <div className="flex items-center gap-2 mb-4">
                 <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-md text-label-md">Luxestay Exclusive</span>
                 <div className="flex items-center text-secondary">
                   <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>star</span>
-                  <span className="font-label-md text-label-md ml-1">{data.stars.toFixed(1)}</span>
-                  <span className="text-on-surface-variant ml-1 font-body-md">({data.reviewsCount} đánh giá)</span>
+                  <span className="font-label-md text-label-md ml-1">{(data.stars ?? 0).toFixed(1)}</span>
+                  <span className="text-on-surface-variant ml-1 font-body-md">({data.reviewsCount ?? 0} đánh giá)</span>
                 </div>
               </div>
               <h1 className="font-display-lg text-display-lg text-primary mb-2">{data.name}</h1>
@@ -132,30 +164,29 @@ const CTHomestay = () => {
                 <span className="font-body-lg text-body-lg">{data.location}</span>
               </div>
             </div>
-            
+
             <div className="w-full h-px bg-outline-variant/30 mb-10"></div>
-            
+
             <section className="mb-12">
               <h2 className="font-headline-md text-headline-md text-primary mb-6">Giới thiệu</h2>
               <div className="font-body-lg text-body-lg text-on-surface-variant space-y-4 leading-relaxed">
                 <p>{data.description}</p>
-                <p>{data.descriptionExtended}</p>
+                {data.descriptionExtended && <p>{data.descriptionExtended}</p>}
               </div>
             </section>
 
             <section className="mb-12">
               <h2 className="font-headline-md text-headline-md text-primary mb-6">Tiện nghi cao cấp</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-4">
-                {data.amenities.map((amenity, i) => {
-                  let icon = "check_circle";
-                  if (amenity.includes("WiFi")) icon = "wifi";
-                  else if (amenity.includes("Hồ bơi") || amenity.includes("bơi")) icon = "pool";
-                  else if (amenity.includes("BBQ")) icon = "outdoor_grill";
-                  else if (amenity.includes("Bếp")) icon = "kitchen";
-                  else if (amenity.includes("đậu xe")) icon = "local_parking";
-                  else if (amenity.includes("hòa")) icon = "ac_unit";
-                  else if (amenity.includes("Spa")) icon = "spa";
-                  
+                {(data.amenities ?? []).map((amenity, i) => {
+                  let icon = 'check_circle';
+                  if (amenity.includes('Wifi') || amenity.includes('wifi')) icon = 'wifi';
+                  else if (amenity.includes('bơi')) icon = 'pool';
+                  else if (amenity.includes('BBQ')) icon = 'outdoor_grill';
+                  else if (amenity.includes('Bếp')) icon = 'kitchen';
+                  else if (amenity.includes('đậu xe')) icon = 'local_parking';
+                  else if (amenity.includes('hòa')) icon = 'ac_unit';
+                  else if (amenity.includes('Spa')) icon = 'spa';
                   return (
                     <div key={i} className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
@@ -170,116 +201,60 @@ const CTHomestay = () => {
 
             <section className="mb-12">
               <h2 className="font-headline-md text-headline-md text-primary mb-6">Vị trí</h2>
-              <div className="rounded-2xl overflow-hidden h-[400px] border border-outline-variant relative">
-                <img alt="Map" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM5F7S3eGx0XiLrmDr1jLlyYDpk3x2ckQ4UXgzsDCQPL1YPeaQZTeZVJgI_uoHjwAqbdFAZrDD6Z1w09AoUd3WQJVzD0UZ2ACgamd7R8EzV4gLXPVEEz75-LZ7B6alERd_pWgTMyQ4ct2x8MDhtSp2Oh0fW7bVf7r42gTZS868a7F-Gn2I4QQc8Va3M3tvg_nfNdNrT54wfbwb0EVo4xZY9H7Sd_Ru0YBYjdRsh7-6zEUsToE96qGdpVXpAnf0l0MM3vXQDBuaWkI" />
-                <div className="absolute inset-0 bg-black/5"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <div className="bg-primary text-on-primary p-3 rounded-full shadow-lg">
-                    <span className="material-symbols-outlined">location_on</span>
-                  </div>
-                </div>
-              </div>
               <div className="mt-4 p-6 bg-surface-container-low rounded-xl flex items-start gap-4">
                 <span className="material-symbols-outlined text-secondary">info</span>
                 <p className="font-body-md text-body-md text-on-surface-variant">{data.address}</p>
               </div>
             </section>
-
-            <section>
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="font-headline-md text-headline-md text-primary">Đánh giá từ khách hàng</h2>
-                <div className="flex items-center gap-2">
-                  <span className="font-headline-md text-headline-md text-primary">{data.stars.toFixed(1)}</span>
-                  <div className="flex text-secondary">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>star</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-8">
-                {data.reviews.map((review, i) => (
-                  <div key={i} className="p-6 border border-outline-variant/30 rounded-2xl hover:shadow-sm transition-shadow bg-white">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">
-                          {review.name.slice(0, 2).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-label-md text-label-md text-primary">{review.name}</p>
-                          <p className="text-[12px] text-on-surface-variant">{review.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex text-secondary scale-75 origin-right">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>star</span>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed italic">"{review.text}"</p>
-                  </div>
-                ))}
-              </div>
-            </section>
           </div>
 
-          {/* Right Sidebar / Booking Card */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-surface border border-outline-variant/50 p-8 rounded-2xl custom-shadow">
               <div className="flex items-baseline gap-1 mb-8">
-                <span className="font-headline-lg text-headline-lg text-primary">{(data.price).toLocaleString('vi-VN')} VNĐ</span>
+                <span className="font-headline-lg text-headline-lg text-primary">{(data.price ?? 0).toLocaleString("vi-VN")} VNĐ</span>
                 <span className="font-body-md text-body-md text-on-surface-variant">/ Đêm</span>
               </div>
               <div className="space-y-4 mb-8">
                 <div className="border border-outline rounded-xl p-4 bg-white">
-                  <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Nhận - Trả phòng</label>
-                  <div className="flex justify-between items-center cursor-pointer">
-                    <input 
-                      type="text" 
-                      className="font-body-md text-body-md bg-transparent border-none p-0 focus:ring-0 w-full"
-                      value={dateRange} 
-                      onChange={(e) => setDateRange(e.target.value)}
-                    />
-                    <span className="material-symbols-outlined text-on-surface-variant">calendar_today</span>
-                  </div>
+                  <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Nhận phòng</label>
+                  <input type="date" className="font-body-md text-body-md w-full bg-transparent border-none p-0 focus:ring-0" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
                 </div>
                 <div className="border border-outline rounded-xl p-4 bg-white">
-                  <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Số khách</label>
-                  <div className="flex justify-between items-center cursor-pointer">
-                    <input 
-                      type="text" 
-                      className="font-body-md text-body-md bg-transparent border-none p-0 focus:ring-0 w-full"
-                      value={guests} 
-                      onChange={(e) => setGuests(e.target.value)}
-                    />
-                    <span className="material-symbols-outlined text-on-surface-variant">expand_more</span>
+                  <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Trả phòng</label>
+                  <input type="date" className="font-body-md text-body-md w-full bg-transparent border-none p-0 focus:ring-0" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+                </div>
+                <div className="border border-outline rounded-xl p-4 bg-white grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Người lớn</label>
+                    <input type="number" min="1" className="font-body-md w-full" value={adultCount} onChange={(e) => setAdultCount(Number(e.target.value))} />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-bold text-on-surface-variant uppercase mb-1">Trẻ em</label>
+                    <input type="number" min="0" className="font-body-md w-full" value={childCount} onChange={(e) => setChildCount(Number(e.target.value))} />
                   </div>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={handleBooking}
-                className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline-md text-headline-md hover:opacity-90 transition-all active:scale-[0.98] mb-4 text-white"
+                disabled={submitting}
+                className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline-md text-headline-md hover:opacity-90 transition-all active:scale-[0.98] mb-4 text-white disabled:opacity-60"
               >
-                Đặt ngay
+                {submitting ? 'Đang xử lý...' : 'Đặt ngay'}
               </button>
               <p className="text-center text-[12px] text-on-surface-variant">Bạn chưa bị trừ tiền ngay lúc này</p>
               <div className="mt-8 pt-8 border-t border-outline-variant/30 space-y-4">
                 <div className="flex justify-between font-body-md text-body-md">
-                  <span className="text-on-surface-variant">{(data.price).toLocaleString('vi-VN')} VNĐ x {nights} đêm</span>
-                  <span className="text-primary font-medium">{(roomTotal).toLocaleString('vi-VN')} VNĐ</span>
+                  <span className="text-on-surface-variant">{(data.price ?? 0).toLocaleString("vi-VN")} VNĐ x {nights} đêm</span>
+                  <span className="text-primary font-medium">{roomTotal.toLocaleString('vi-VN')} VNĐ</span>
                 </div>
                 <div className="flex justify-between font-body-md text-body-md">
                   <span className="text-on-surface-variant">Phí dịch vụ</span>
-                  <span className="text-primary font-medium">{(serviceFee).toLocaleString('vi-VN')} VNĐ</span>
+                  <span className="text-primary font-medium">{serviceFee.toLocaleString('vi-VN')} VNĐ</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-outline-variant/30">
                   <span className="font-headline-md text-headline-md text-primary">Tổng cộng</span>
-                  <span className="font-headline-md text-headline-md text-primary">{(totalAmount).toLocaleString('vi-VN')} VNĐ</span>
+                  <span className="font-headline-md text-headline-md text-primary">{totalAmount.toLocaleString('vi-VN')} VNĐ</span>
                 </div>
-              </div>
-              <div className="mt-8 flex items-center justify-center gap-2 text-secondary font-label-md text-label-md">
-                <span className="material-symbols-outlined text-[20px]">verified_user</span>
-                <span className="">Đảm bảo giá tốt nhất</span>
               </div>
             </div>
           </div>
