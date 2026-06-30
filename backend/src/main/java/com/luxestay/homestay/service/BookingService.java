@@ -153,7 +153,7 @@ public class BookingService {
         return "Sắp tới";
     }
 
-    private BookingResponse toResponse(Booking booking) {
+    BookingResponse toResponse(Booking booking) {
         Homestay homestay = booking.getHomestay();
         return BookingResponse.builder()
                 .id(booking.getId())

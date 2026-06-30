@@ -47,4 +47,8 @@ public class Homestay {
     @Column(name = "amenity")
     @Builder.Default
     List<String> amenities = new ArrayList<>();
+
+    String status;
+    java.time.LocalDateTime createdAt;
+    java.time.LocalDateTime updatedAt;
 }

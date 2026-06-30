@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Layout & pages
 import Layout from './components/Layout';
@@ -89,7 +87,6 @@ function App() {
 
           {/* Route cũ, chuyển về thông tin cá nhân */}
           <Route path="quan-ly" element={<Navigate to="/thong-tin-ca-nhan" replace />} />
-          <Route path="quan-ly" element={<QuanLy />} />
           <Route path="/xac-thuc-pin" element={<NhapMaPin />}/>
           <Route path="/quen-mat-khau" element={<QuenMatKhau />}/>
           <Route path="/xac-thuc-otp" element={<NhapOtpQuenMatKhau />}/>

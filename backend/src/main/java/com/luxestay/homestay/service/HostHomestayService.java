@@ -33,13 +33,13 @@ public class HostHomestayService {
     }
 
     public HomestayResponse updateHomestay(String id, HomestayRequest request) {
-        Homestay homestay = homestayRepository.findById(id).orElseThrow(() -> new RuntimeException("Homestay not found"));
+        Homestay homestay = homestayRepository.findById(Long.valueOf(id)).orElseThrow(() -> new RuntimeException("Homestay not found"));
         homestayMapper.updateEntity(homestay, request);
         homestay.setUpdatedAt(LocalDateTime.now());
         return homestayMapper.toResponse(homestayRepository.save(homestay));
     }
 
     public void deleteHomestay(String id) {
-        homestayRepository.deleteById(id);
+        homestayRepository.deleteById(Long.valueOf(id));
     }
 }
