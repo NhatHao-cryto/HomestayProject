@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
 const CTHomestay = () => {
@@ -8,6 +8,7 @@ const CTHomestay = () => {
   // Selected date & guest states
   const [dateRange, setDateRange] = useState('15/11/2023 - 17/11/2023');
   const [guests, setGuests] = useState('2 Người lớn, 1 Trẻ em');
+  const [savedReviews, setSavedReviews] = useState([]);
 
   // Homestays data for detail display
   const homestayDetails = {
@@ -56,6 +57,20 @@ const CTHomestay = () => {
 
   // Get current active details or fallback to Villa Hoàng Hôn
   const data = homestayDetails[id] || homestayDetails["1"];
+  const currentHomestayId = id || "1";
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(`reviews_${currentHomestayId}`) || '[]');
+      setSavedReviews(saved);
+    } catch (e) {
+      console.error('Không thể đọc đánh giá:', e);
+      setSavedReviews([]);
+    }
+  }, [currentHomestayId]);
+
+  // Đánh giá mới nhất 
+  const allReviews = [...savedReviews, ...data.reviews];
 
   const nights = 2;
   const roomTotal = data.price * nights;
@@ -63,20 +78,46 @@ const CTHomestay = () => {
   const vat = 0; // standard setup
   const totalAmount = roomTotal + serviceFee;
 
+  const BOOKINGS_STORAGE_KEY = 'luxestay_bookings';
+  
   const handleBooking = () => {
-    // Navigate to payment page with details in state
-    navigate('/thanh-toan', {
-      state: {
-        homestayId: id || "1",
-        homestayName: data.name,
-        location: data.location,
-        price: data.price,
-        nights,
-        dateRange,
-        guests,
-        totalAmount
-      }
-    });
+    const now = new Date();
+    const bookingId = `LX-${now.getTime().toString().slice(-6)}`;
+
+    const newBooking = {
+      id: bookingId,
+      homestayId: id || "1",
+      homestayName: data.name,
+      location: data.location,
+      address: data.address,
+      image: data.images[0],
+      price: data.price,
+      nights,
+      dateRange,
+      guests,
+      roomTotal,
+      serviceFee,
+      discount: 0,
+      totalAmount,
+      status: 'confirmed', // xác nhận, đơn mới tạo
+      createdAt: now.toISOString(),
+      timeline: [
+        { key: 'booked', label: 'Đã đặt chỗ thành công', time: now.toLocaleString('vi-VN'), done: true },
+        { key: 'paid', label: 'Thanh toán hoàn tất', time: now.toLocaleString('vi-VN'), done: true },
+        { key: 'checkin', label: 'Đã nhận phòng', time: null, done: false },
+        { key: 'completed', label: 'Chuyến đi kết thúc', time: null, done: false },
+      ],
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+      existing.unshift(newBooking);
+      localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(existing));
+    } catch (e) {
+      console.error('Không thể lưu đơn đặt phòng:', e);
+    }
+
+    navigate(`/lich-su/${bookingId}`, { state: newBooking });
   };
 
   return (
@@ -123,7 +164,7 @@ const CTHomestay = () => {
                 <div className="flex items-center text-secondary">
                   <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>star</span>
                   <span className="font-label-md text-label-md ml-1">{data.stars.toFixed(1)}</span>
-                  <span className="text-on-surface-variant ml-1 font-body-md">({data.reviewsCount} đánh giá)</span>
+                  <span className="text-on-surface-variant ml-1 font-body-md">({data.reviewsCount + savedReviews.length} đánh giá)</span>
                 </div>
               </div>
               <h1 className="font-display-lg text-display-lg text-primary mb-2">{data.name}</h1>
@@ -198,27 +239,36 @@ const CTHomestay = () => {
                 </div>
               </div>
               <div className="space-y-8">
-                {data.reviews.map((review, i) => (
-                  <div key={i} className="p-6 border border-outline-variant/30 rounded-2xl hover:shadow-sm transition-shadow bg-white">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">
-                          {review.name.slice(0, 2).toUpperCase()}
+                {allReviews.map((review, i) => {
+                  const rating = review.rating ?? 5;
+                  return (
+                    <div key={i} className="p-6 border border-outline-variant/30 rounded-2xl hover:shadow-sm transition-shadow bg-white">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">
+                            {review.name.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-label-md text-label-md text-primary">{review.name}</p>
+                            <p className="text-[12px] text-on-surface-variant">{review.date}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-label-md text-label-md text-primary">{review.name}</p>
-                          <p className="text-[12px] text-on-surface-variant">{review.date}</p>
+                        <div className="flex text-secondary scale-75 origin-right">
+                          {[...Array(5)].map((_, starIdx) => (
+                            <span
+                              key={starIdx}
+                              className="material-symbols-outlined"
+                              style={{ fontVariationSettings: `'FILL' ${starIdx < rating ? 1 : 0}` }}
+                            >
+                              star
+                            </span>
+                          ))}
                         </div>
                       </div>
-                      <div className="flex text-secondary scale-75 origin-right">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 1' }}>star</span>
-                        ))}
-                      </div>
+                      <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed italic">"{review.text}"</p>
                     </div>
-                    <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed italic">"{review.text}"</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           </div>

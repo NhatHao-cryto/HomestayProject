@@ -133,12 +133,16 @@ const LSDatPhong = () => {
                     Xem chi tiết
                   </button>
                   {item.status === 'Đã hoàn thành' && (
-                    <button className="px-6 py-3 border-[1.5px] border-secondary text-secondary rounded font-label-md hover:bg-secondary/5 transition-all border">
+                    <button
+                     onClick={() => navigate(`/danh-gia/${item.id}`)}
+                     className="px-6 py-3 border-[1.5px] border-secondary text-secondary rounded font-label-md hover:bg-secondary/5 transition-all border">
                       Đánh giá
                     </button>
                   )}
                   {item.status === 'Sắp tới' && (
-                    <button className="px-6 py-3 border-[1.5px] border-outline text-on-surface-variant rounded font-label-md hover:bg-surface-variant/50 transition-all border border-gray-300">
+                    <button 
+                     onClick={() => navigate(`/quan-ly-dat-phong/${item.id}`)}
+                     className="px-6 py-3 border-[1.5px] border-outline text-on-surface-variant rounded font-label-md hover:bg-surface-variant/50 transition-all border border-gray-300">
                       Quản lý đặt phòng
                     </button>
                   )}

@@ -20,6 +20,7 @@ import NhapMaPin from "./pages/NhapMaPin.jsx";
 import DatLaiMatKhau from "./pages/DatLaiMatKhau";
 import NhapOtpQuenMatKhau from "./pages/NhapOtpQuenMatKhau";
 import QuenMatKhau from "./pages/QuenMatKhau";
+import DanhGia from './pages/DanhGia';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/quen-mat-khau" element={<QuenMatKhau />}/>
           <Route path="/xac-thuc-otp" element={<NhapOtpQuenMatKhau />}/>
           <Route path="/dat-lai-mat-khau" element={<DatLaiMatKhau />}/>
+          <Route path="/danh-gia/:id" element={<DanhGia />} />
         </Route>
       </Routes>
     </Router>

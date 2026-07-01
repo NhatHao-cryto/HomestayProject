@@ -1,6 +1,58 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 
+const BOOKINGS_STORAGE_KEY = 'luxestay_bookings';
+
+// Cấu hình hiển thị theo trạng thái đơn
+const STATUS_CONFIG = {
+  confirmed: { label: 'Đã xác nhận', badgeClass: 'bg-blue-100 text-blue-800' },
+  checked_in: { label: 'Đang lưu trú', badgeClass: 'bg-green-100 text-green-800' },
+  completed: { label: 'Đã hoàn thành', badgeClass: 'bg-yellow-100 text-yellow-800' },
+  cancelled: { label: 'Đã hủy', badgeClass: 'bg-red-100 text-red-800' },
+};
+
+const DEFAULT_TIMELINE = [
+  { key: 'booked', label: 'Đã đặt chỗ thành công', time: null, done: false },
+  { key: 'paid', label: 'Thanh toán hoàn tất', time: null, done: false },
+  { key: 'checkin', label: 'Đã nhận phòng', time: null, done: false },
+  { key: 'completed', label: 'Chuyến đi kết thúc', time: null, done: false },
+];
+
+// Dữ liệu mẫu dùng khi không tìm thấy đơn nào (ví dụ vào thẳng URL khi test)
+const buildFallbackBooking = (id) => ({
+  id: id || 'LX-12345',
+  homestayId: '1',
+  homestayName: 'Villa Hoàng Hôn',
+  location: 'Đường Bờ Biển, Phường Thắng Tam, Vũng Tàu',
+  address: 'Đường Bờ Biển, Phường Thắng Tam, Vũng Tàu',
+  image:
+    'https://lh3.googleusercontent.com/aida-public/AB6AXuDh4yhn7cBrFHzdIDvaZf4n7lTxAJUuecn9j3k340bUSTsDW6uBAYooWGv5SbDkMHE9LBjuhA_HwP51jPRnUVwrL3BSLaR0tEdICrB0rt3ClTznZ4H12j7PTCoGI5FPFeZ82qdFIHkoX4CGwgK8y7bzmsXa1_FbyWhmZDY_odcs8yVEGq2dOs0Wxe4NlvkMscQmPZl2rO5fCSuOK-MrZ4TLDpI5SS-9871ak_Q27Or8j165h16khzXEfZ2UTb5-49NvnJuKBXHBtL0',
+  nights: 3,
+  dateRange: '12/04/2024 - 15/04/2024',
+  guests: '2 Người lớn, 1 Trẻ em',
+  roomTotal: 15000000,
+  serviceFee: 1200000,
+  discount: 500000,
+  totalAmount: 15700000,
+  status: 'completed',
+  createdAt: null,
+  timeline: [
+    { key: 'booked', label: 'Đã đặt chỗ thành công', time: '10/04/2024, 14:20', done: true },
+    { key: 'paid', label: 'Thanh toán hoàn tất', time: '10/04/2024, 14:25', done: true },
+    { key: 'checkin', label: 'Đã nhận phòng', time: '12/04/2024, 14:00', done: true },
+    { key: 'completed', label: 'Chuyến đi kết thúc', time: '15/04/2024, 11:30', done: true },
+  ],
+});
+
+// Bước tiếp theo hoàn thành sẽ quyết định trạng thái tổng của đơn
+const statusForStepKey = (key) => {
+  if (key === 'checkin') return 'checked_in';
+  if (key === 'completed') return 'completed';
+  return 'confirmed';
+};
+
+const formatCurrency = (value) => `${Number(value || 0).toLocaleString('vi-VN')} ₫`;
+
 const ChiTietLS = () => {
   const { id } = useParams();
 
@@ -138,15 +190,15 @@ const ChiTietLS = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center text-body-md text-on-surface-variant">
                 <span>Giá phòng (3 đêm)</span>
-                <span>15.000.000 ₫</span>
+                 <span>{formatCurrency(booking.roomTotal)}</span>
               </div>
               <div className="flex justify-between items-center text-body-md text-on-surface-variant">
                 <span>Phí dịch vụ Luxestay</span>
-                <span>1.200.000 ₫</span>
+                <span>{formatCurrency(booking.serviceFee)}</span>
               </div>
               <div className="flex justify-between items-center text-body-md text-tertiary text-red-600">
                 <span>Giảm giá thành viên</span>
-                <span>-500.000 ₫</span>
+                <span>-{formatCurrency(booking.discount)}</span>
               </div>
               <div className="pt-4 border-t border-outline-variant/30 flex justify-between items-center">
                 <span className="font-headline-md text-[20px] text-primary">Tổng cộng</span>
@@ -165,47 +217,33 @@ const ChiTietLS = () => {
           <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/20 bg-white">
             <h3 className="font-headline-md text-[20px] text-primary mb-8">Trạng thái đặt phòng</h3>
             <div className="relative space-y-10 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant/30 before:bg-gray-200">
-              {/* Step 1: Booked */}
-              <div className="relative flex items-center gap-6">
-                <div className="relative z-10 w-6 h-6 bg-secondary flex items-center justify-center rounded-full text-white bg-yellow-600">
-                  <span className="material-symbols-outlined text-[16px] text-white">check</span>
+              {timeline.map((step) => (
+                <div key={step.key} className="relative flex items-center gap-6">
+                  <div
+                    className={`relative z-10 w-6 h-6 flex items-center justify-center rounded-full text-white ${
+                      step.done ? 'bg-yellow-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    {step.done && <span className="material-symbols-outlined text-[16px] text-white">check</span>}
+                  </div>
+                  <div>
+                    <p className={`font-label-md text-label-md ${step.done ? 'text-primary' : 'text-outline-variant'}`}>
+                      {step.label}
+                    </p>
+                    <p className="text-xs text-outline-variant">{step.time || 'Chưa diễn ra'}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-label-md text-label-md text-primary">Đã đặt chỗ thành công</p>
-                  <p className="text-xs text-outline-variant">10/04/2024, 14:20</p>
-                </div>
-              </div>
-              {/* Step 2: Payment Confirmed */}
-              <div className="relative flex items-center gap-6">
-                <div className="relative z-10 w-6 h-6 bg-secondary flex items-center justify-center rounded-full text-white bg-yellow-600">
-                  <span className="material-symbols-outlined text-[16px] text-white">check</span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-primary">Thanh toán hoàn tất</p>
-                  <p className="text-xs text-outline-variant">10/04/2024, 14:25</p>
-                </div>
-              </div>
-              {/* Step 3: Checked-in */}
-              <div className="relative flex items-center gap-6">
-                <div className="relative z-10 w-6 h-6 bg-secondary flex items-center justify-center rounded-full text-white bg-yellow-600">
-                  <span className="material-symbols-outlined text-[16px] text-white">check</span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-primary">Đã nhận phòng</p>
-                  <p className="text-xs text-outline-variant">12/04/2024, 14:00</p>
-                </div>
-              </div>
-              {/* Step 4: Completed */}
-              <div className="relative flex items-center gap-6">
-                <div className="relative z-10 w-6 h-6 bg-secondary flex items-center justify-center rounded-full text-white bg-yellow-600">
-                  <span className="material-symbols-outlined text-[16px] text-white">check</span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-primary">Chuyến đi kết thúc</p>
-                  <p className="text-xs text-outline-variant">15/04/2024, 11:30</p>
-                </div>
-              </div>
+              ))}
             </div>
+
+            {!allStepsDone && (
+              <button
+                onClick={handleAdvanceStatus}
+                className="w-full mt-8 py-3 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-lg hover:bg-secondary hover:text-white transition-all border border-secondary"
+              >
+                Cập nhật trạng thái tiếp theo (demo)
+              </button>
+            )}            
           </div>
         </aside>
       </div>
